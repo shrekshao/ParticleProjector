@@ -1,0 +1,5 @@
+.vscode/
+
+# tsd
+typings/
+tsd.json
