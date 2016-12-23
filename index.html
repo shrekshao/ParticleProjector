@@ -20,11 +20,7 @@
 			left: 20px!important;
 		}
 	</style>
-</head>
 
-<body>
-	<div style="position: absolute; top: 10px; width: 100%; text-align: center; color:#eee">
-		Particle Projector</div>
 
 	<script src="js/lib/three.js"></script>
 	<!--<script src="js/lib/three.min.js"></script>-->
@@ -34,6 +30,52 @@
 	<script src="js/lib/GeometryUtils.js"></script>
 
     <script src="js/App.js"></script>
+	
+
+	<script id="vs-particles" type="x-shader/x-vertex">
+		#define PS_CAM_MAX_DIST 12.0
+		
+		uniform float uPointSize;
+
+		void main()
+		{
+			vec3 pos = position;    // temp
+
+			vec3 camToPos = pos - cameraPosition;
+			float camDist = length(camToPos);
+
+			gl_PointSize = max( uPointSize * PS_CAM_MAX_DIST / camDist, 1.0 );
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+		}
+    </script>
+
+	<script id="fs-particles" type="x-shader/x-fragment">
+		#define M_PI    3.14159265358979323846264338327950
+		#define M_2PI   6.28318530717958647692528676655900
+		#define M_PI2   1.57079632679489661923132169163975
+
+		// varying vec3 vColor;
+
+		// uniform float uTime;
+		uniform float uAlpha;
+
+		void main() {
+			vec3 vColor = vec3(1.0, 0.0, 0.0);  // tmp
+
+			// calc alpha for shape
+			vec2 tmpCoord = 0.5 * cos( M_2PI * gl_PointCoord + M_PI ) + 0.5;
+			float alpha = tmpCoord.x * tmpCoord.y;
+
+			gl_FragColor = vec4( vColor, uAlpha * alpha );
+		}
+    </script>
+</head>
+
+<body>
+	<div style="position: absolute; top: 10px; width: 100%; text-align: center; color:#eee">
+		Particle Projector</div>
+
 	<script src="js/index.js"></script>
 </body>
 

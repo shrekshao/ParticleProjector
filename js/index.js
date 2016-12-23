@@ -15,15 +15,42 @@
 
     var camera, tick = 0,
         scene, renderer, clock = new THREE.Clock(true),
-        controls, container, gui = new dat.GUI(),
+        // controls, container, gui = new dat.GUI(),
         options, spawnerOptions, particleSystem;
 
+    var container;
+    var canvas;
+
+    var gl;
+    var isWebGL2 = true;
+
+
+
+    var pointSize = 50.0;
+    var pointAlpha = 1.0;
+
+
+    function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+    }
+
     function init() {
-        container = document.createElement('div');
-        document.body.appendChild(container);
+        container = document.createElement( 'div' );
+        document.body.appendChild( container );
+        canvas = document.createElement( 'canvas' );
 
+        gl = canvas.getContext( 'webgl2', { antialias: true } );
+        if (!gl) {
+            isWebGL2 = false;
+            gl = canvas.getContext( 'webgl', { antialias: true } );
+        }
 
-        renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.WebGLRenderer( { canvas: canvas, context: gl } );
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.domElement);
@@ -35,8 +62,6 @@
         camera.position.z = 100;
         
         scene = new THREE.Scene();
-
-
 
         var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
         var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -60,29 +85,48 @@
         var geometry = new THREE.BufferGeometry();
         geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
 
-        var mesh = new THREE.Points(geometry);
+
+        // custom particle shader test
+        var particleMaterial = new THREE.ShaderMaterial( {
+            uniforms: {
+              'uPointSize': { type: 'f', value: pointSize },
+              'uAlpha': { type: 'f', value: pointAlpha },
+            },
+            vertexShader: document.getElementById( 'vs-particles' ).textContent,
+            fragmentShader: document.getElementById( 'fs-particles' ).textContent,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            depthTest: true,
+            transparent: true
+          } );
+
+
+
+
+        var mesh = new THREE.Points(geometry, particleMaterial);
 
         // scene.add( sphere );
         scene.add( mesh );
 
+        // renderer.render(scene, camera);
+
+
+
+    }
+
+
+
+    function update() {
+
+        // requestAnimationFrame(update);
+
         renderer.render(scene, camera);
-
-
-
     }
 
-
-
-    function onWindowResize() {
-
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-    }
+    
 
 
     init();
+    update();
 
 })();
