@@ -73,15 +73,19 @@
         window.addEventListener('resize', onWindowResize, false);
 
 
+        // camera
         camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 1, 10000 );
         camera.position.z = 100;
+        controls = new THREE.OrbitControls( camera, renderer.domElement );
         
+
+        // scene
         scene = new THREE.Scene();
 
-        var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
-        var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-        // var material = new THREE.MeshNormalMaterial( {shading: THREE.FlatShading} );
-        var sphere = new THREE.Mesh( sphereBufferGeometry, material );
+        // var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
+        // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        // // var material = new THREE.MeshNormalMaterial( {shading: THREE.FlatShading} );
+        // var sphere = new THREE.Mesh( sphereBufferGeometry, material );
 
         var sphereGeometry = new THREE.SphereGeometry(5, 10, 10);
 
