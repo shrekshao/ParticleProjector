@@ -15,7 +15,7 @@
 
     var camera, tick = 0,
         scene, renderer, clock = new THREE.Clock(true),
-        // controls, container, gui = new dat.GUI(),
+        controls, gui = new dat.GUI(),
         options, spawnerOptions, particleSystem;
 
     var container;
@@ -25,10 +25,25 @@
     var isWebGL2 = true;
 
 
+    // temp cfg class
+    var cfg = {
+        pointSize: 50.0, 
+        pointAlpha: 1.0
+    };
 
-    var pointSize = 50.0;
-    var pointAlpha = 1.0;
+    var particleMaterial;
+    var pointMesh;
 
+    gui.add( cfg, 'pointSize', 1.0, 100.0 ).onChange( function(value) {
+        particleMaterial.uniforms.uPointSize.value = value;
+        // pointMesh.material.uniforms.uPointSize.value = value;
+        // console.log('pointSize: ' + value);
+    } );
+    gui.add( cfg, 'pointAlpha', 0.0, 1.0 ).onChange( function(value) {
+        particleMaterial.uniforms.uAlpha.value = value;
+        // pointMesh.material.uniforms.uAlpha.value = value;
+        // console.log('pointAlpha: ' + value);
+    } );
 
     function onWindowResize() {
 
@@ -87,10 +102,10 @@
 
 
         // custom particle shader test
-        var particleMaterial = new THREE.ShaderMaterial( {
+        particleMaterial = new THREE.ShaderMaterial( {
             uniforms: {
-              'uPointSize': { type: 'f', value: pointSize },
-              'uAlpha': { type: 'f', value: pointAlpha },
+              'uPointSize': { type: 'f', value: cfg.pointSize },
+              'uAlpha': { type: 'f', value: cfg.pointAlpha },
             },
             vertexShader: document.getElementById( 'vs-particles' ).textContent,
             fragmentShader: document.getElementById( 'fs-particles' ).textContent,
@@ -103,10 +118,10 @@
 
 
 
-        var mesh = new THREE.Points(geometry, particleMaterial);
+        pointMesh = new THREE.Points(geometry, particleMaterial);
 
         // scene.add( sphere );
-        scene.add( mesh );
+        scene.add( pointMesh );
 
         // renderer.render(scene, camera);
 
@@ -118,7 +133,7 @@
 
     function update() {
 
-        // requestAnimationFrame(update);
+        requestAnimationFrame(update);
 
         renderer.render(scene, camera);
     }
