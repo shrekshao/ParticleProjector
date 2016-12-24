@@ -54,7 +54,32 @@
 
     }
 
-    function init() {
+
+
+    var objLoader = new THREE.OBJLoader();
+    var mtlLoader = new THREE.MTLLoader();
+
+
+    // stonebird teach me how to use require
+    function loadObjModel(params, onload) {
+
+        mtlLoader.setBaseUrl(params.baseUrl); //texture base path
+        mtlLoader.setPath(params.baseUrl);    //mtl base path
+        mtlLoader.load(params.mtlName, function(materials) {
+            materials.preload();
+            
+            objLoader.setMaterials(materials);
+            objLoader.setPath(params.baseUrl);
+            objLoader.load(params.objName, function(object){
+                onload(object);
+            });
+        });
+    }
+
+
+
+
+    function init(success) {
         container = document.createElement( 'div' );
         document.body.appendChild( container );
         canvas = document.createElement( 'canvas' );
@@ -79,30 +104,6 @@
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         
 
-        // scene
-        scene = new THREE.Scene();
-
-        // var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
-        // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-        // // var material = new THREE.MeshNormalMaterial( {shading: THREE.FlatShading} );
-        // var sphere = new THREE.Mesh( sphereBufferGeometry, material );
-
-        var sphereGeometry = new THREE.SphereGeometry(5, 10, 10);
-
-        // point cloud of models
-        var particleCount = 1000;
-        var points = THREE.GeometryUtils.randomPointsInGeometry( sphereGeometry, particleCount );
-
-        var data = new Float32Array( particleCount * 4 );
-        for ( var i = 0, j = 0, l = data.length; i < l; i += 4, j += 1 ) {
-            data[ i ] = points[ j ].x;
-            data[ i + 1 ] = points[ j ].y;
-            data[ i + 2 ] = points[ j ].z;
-            data[ i + 3 ] = 1.0;
-        }
-
-        var geometry = new THREE.BufferGeometry();
-        geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
 
 
         // custom particle shader test
@@ -122,12 +123,78 @@
 
 
 
-        pointMesh = new THREE.Points(geometry, particleMaterial);
+        // scene
+        scene = new THREE.Scene();
 
-        // scene.add( sphere );
-        scene.add( pointMesh );
+        // var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
+        // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        // // var material = new THREE.MeshNormalMaterial( {shading: THREE.FlatShading} );
+        // var sphere = new THREE.Mesh( sphereBufferGeometry, material );
 
-        // renderer.render(scene, camera);
+
+
+        // // sphere geometry
+        // var sphereGeometry = new THREE.SphereGeometry(5, 10, 10);
+
+        // // point cloud of models
+        // var particleCount = 1000;
+        // var points = THREE.GeometryUtils.randomPointsInGeometry( sphereGeometry, particleCount );
+
+        // var data = new Float32Array( particleCount * 4 );
+        // for ( var i = 0, j = 0, l = data.length; i < l; i += 4, j += 1 ) {
+        //     data[ i ] = points[ j ].x;
+        //     data[ i + 1 ] = points[ j ].y;
+        //     data[ i + 2 ] = points[ j ].z;
+        //     data[ i + 3 ] = 1.0;
+        // }
+
+        // var geometry = new THREE.BufferGeometry();
+        // geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
+
+        
+
+        // pointMesh = new THREE.Points(geometry, particleMaterial);
+
+        // // scene.add( sphere );
+        // scene.add( pointMesh );
+
+
+
+
+        loadObjModel( {
+            // format: 'obj',
+            baseUrl: 'models/obj/sword/',
+            mtlName: 'Sword07_obj.mtl',
+            objName: 'Sword07_obj.obj'
+        } , function (object) {
+
+            console.log(object);
+
+            var bufferGeo = object.children[0].geometry;
+
+            var particleCount = 1000;
+            var points = THREE.GeometryUtils.randomPointsInBufferGeometry( bufferGeo, particleCount );
+
+            // TODO: GeometryUtils, random attributes (besides position)
+            var data = new Float32Array( particleCount * 4 );
+            for ( var i = 0, j = 0, l = data.length; i < l; i += 4, j += 1 ) {
+                data[ i ] = points[ j ].x;
+                data[ i + 1 ] = points[ j ].y;
+                data[ i + 2 ] = points[ j ].z;
+                data[ i + 3 ] = 1.0;
+            }
+
+
+            var geometry = new THREE.BufferGeometry();
+            geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
+
+            pointMesh = new THREE.Points(geometry, particleMaterial);
+            scene.add( pointMesh );
+
+            success();
+        } );
+
+        
 
 
 
@@ -145,7 +212,7 @@
     
 
 
-    init();
-    update();
+    init(update);
+    // update();
 
 })();
