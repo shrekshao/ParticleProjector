@@ -115,6 +115,13 @@
         // scene
         scene = new THREE.Scene();
 
+        var ambient = new THREE.AmbientLight( 0x444444 );
+        scene.add( ambient );
+
+        var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+        directionalLight.position.set( 0, 0, 1 ).normalize();
+        scene.add( directionalLight );
+
         // var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
         // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
         // // var material = new THREE.MeshNormalMaterial( {shading: THREE.FlatShading} );
@@ -151,10 +158,13 @@
 
 
         loadObjModel( {
-            // format: 'obj',
-            baseUrl: 'models/obj/sword/',
-            mtlName: 'Sword07_obj.mtl',
-            objName: 'Sword07_obj.obj'
+            // baseUrl: 'models/obj/sword/',
+            // mtlName: 'Sword07_obj.mtl',
+            // objName: 'Sword07_obj.obj'
+
+            baseUrl: 'models/obj/di/',
+            mtlName: 'di.mtl',
+            objName: 'di.obj'
         } , function (object) {
 
             console.log(object);
@@ -162,6 +172,7 @@
             // TODO: groups, complete obj support
             var bufferGeo = object.children[0].geometry;
             var texture = object.children[0].material.map;
+            // var texture = object.children[0].material.materials[0].map;
 
             
             var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
@@ -171,6 +182,7 @@
                     'uPointSize': { type: 'f', value: cfg.pointSize },
                     'uAlpha': { type: 'f', value: cfg.pointAlpha },
                     'tDiffuse': { type: 't', value: texture }
+                    // 'tDiffuse': { type: 't', value: THREE.ImageUtils.loadTexture( 'models/obj/di/di.png' ) }
                 },
                 vertexShader: document.getElementById( 'vs-particles' ).textContent,
                 fragmentShader: document.getElementById( 'fs-particles' ).textContent,
@@ -211,6 +223,9 @@
 
             pointMesh = new THREE.Points(geometry, particleMaterial);
             scene.add( pointMesh );
+
+
+            // scene.add(object);
 
             success();
         } );
