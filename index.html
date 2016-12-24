@@ -39,12 +39,16 @@
 		
 		uniform float uPointSize;
 
+		uniform float uTime;
+
 		varying vec3 vNormal;
 		varying vec2 vUV;
 
 		void main()
 		{
 			vec3 pos = position;    // temp
+			pos += 1.0 * vec3( 0.1 * cos(0.1 * uTime * pos.y ), 1.0 * sin(0.13 * uTime * pos.z), 0.1 * sin(0.01 * uTime * pos.x + 3.14) );		// temp
+			// pos.x += 0.000000001 * sin(0.0);
 
 			vec3 camToPos = pos - cameraPosition;
 			float camDist = length(camToPos);

@@ -24,7 +24,7 @@
     var gl;
     var isWebGL2 = true;
 
-    var particleCount = 100000;
+    var particleCount = 400000;
 
     // temp cfg class
     var cfg = {
@@ -179,6 +179,8 @@
             // custom particle shader test
             particleMaterial = new THREE.ShaderMaterial( {
                 uniforms: {
+                    'uTime': { type: 'f', value: 0.0 },
+
                     'uPointSize': { type: 'f', value: cfg.pointSize },
                     'uAlpha': { type: 'f', value: cfg.pointAlpha },
                     'tDiffuse': { type: 't', value: texture }
@@ -236,7 +238,7 @@
 
     function update() {
         requestAnimationFrame(update);
-
+        particleMaterial.uniforms.uTime.value += 0.1;
         renderer.render(scene, camera);
     }
 
