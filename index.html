@@ -38,12 +38,16 @@
 		
 		uniform float uPointSize;
 
+		varying vec3 vNormal;
+
 		void main()
 		{
 			vec3 pos = position;    // temp
 
 			vec3 camToPos = pos - cameraPosition;
 			float camDist = length(camToPos);
+
+			vNormal = normalMatrix * normal;
 
 			gl_PointSize = max( uPointSize * PS_CAM_MAX_DIST / camDist, 1.0 );
 
@@ -57,30 +61,33 @@
 		#define M_PI2   1.57079632679489661923132169163975
 
 		// varying vec3 vColor;
+		varying vec3 vNormal;
 
 		// uniform float uTime;
 		uniform float uAlpha;
 
-		void main() {
-			vec3 vColor = vec3(1.0, 0.0, 0.0);  // tmp
+		void main() 
+		{
+			// vec3 color = vec3(1.0, 0.0, 0.0);  // tmp
+			vec3 color = vNormal;
 
 			// // cos ? (from nop)
 			// vec2 tmpCoord = 0.5 * cos( M_2PI * gl_PointCoord + M_PI ) + 0.5;
 			// float alpha = tmpCoord.x * tmpCoord.y;
 
-			// // dist
-			// float alpha = 1.0 - min ( 1.0, 2.0 * length(gl_PointCoord - vec2(0.5, 0.5)) );
+			// dist
+			float alpha = 1.0 - min ( 1.0, 2.0 * length(gl_PointCoord - vec2(0.5, 0.5)) );
 
-			// squared length
-			vec2 r = gl_PointCoord - vec2(0.5, 0.5);
-			float alpha = 1.0 - min ( 1.0, 4.0 * dot(r, r) ) ;
+			// // squared length
+			// vec2 r = gl_PointCoord - vec2(0.5, 0.5);
+			// float alpha = 1.0 - min ( 1.0, 4.0 * dot(r, r) ) ;
 
 			if (alpha <= 0.0)
 			{
 				discard;
 			}
 
-			gl_FragColor = vec4( vColor, uAlpha * alpha );
+			gl_FragColor = vec4( color, uAlpha * alpha );
 		}
     </script>
 </head>

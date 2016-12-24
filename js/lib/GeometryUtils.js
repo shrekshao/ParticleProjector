@@ -1,6 +1,8 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
+ * 
+ * @author modify shrekshao http://shrekshao.github.io
  */
 
 THREE.GeometryUtils = {
@@ -64,6 +66,93 @@ THREE.GeometryUtils = {
 			point.add( vector );
 
 			return point;
+
+		};
+
+	}(),
+
+
+	randomPointWithAttributeInTriangle: function () {
+
+		var vector = new THREE.Vector3();
+
+
+		var vector2 = new THREE.Vector2();
+		var point2 = new THREE.Vector2();
+
+		return function ( vertexA, vertexB, vertexC ) {
+
+			var result = {
+				position: new THREE.Vector3(),
+				normal: new THREE.Vector3(),
+				uv: new THREE.Vector2()
+			};
+
+			var point = new THREE.Vector3();
+
+			var a = Math.random();
+			var b = Math.random();
+
+			if ( ( a + b ) > 1 ) {
+
+				a = 1 - a;
+				b = 1 - b;
+
+			}
+
+			var c = 1 - a - b;
+
+			// position
+			point.copy( vertexA.position );
+			point.multiplyScalar( a );
+
+			vector.copy( vertexB.position );
+			vector.multiplyScalar( b );
+
+			point.add( vector );
+
+			vector.copy( vertexC.position );
+			vector.multiplyScalar( c );
+
+			point.add( vector );
+
+			result.position.copy(point);
+
+			// normal
+			point.copy( vertexA.normal );
+			point.multiplyScalar( a );
+
+			vector.copy( vertexB.normal );
+			vector.multiplyScalar( b );
+
+			point.add( vector );
+
+			vector.copy( vertexC.normal );
+			vector.multiplyScalar( c );
+
+			point.add( vector );
+
+			result.normal.copy(point);
+
+			// uv
+			point2.copy( vertexA.uv );
+			point2.multiplyScalar( a );
+
+			vector2.copy( vertexB.uv );
+			vector2.multiplyScalar( b );
+
+			point2.add( vector );
+
+			vector2.copy( vertexC.uv );
+			vector2.multiplyScalar( c );
+
+			point2.add( vector2 );
+
+			result.uv.copy(point2);
+
+
+
+			return result;
 
 		};
 
@@ -268,6 +357,137 @@ THREE.GeometryUtils = {
 		}
 
 		return result;
+
+	},
+
+	randomPointsWithAttributeInBufferGeometry: function ( geometry, n ) {
+
+		var i,
+			verticesPosition = geometry.attributes.position.array,
+			verticesNormal = geometry.attributes.normal.array,
+			verticesUV = geometry.attributes.uv.array,
+
+			totalArea = 0,
+			cumulativeAreas = [],
+			vA, vB, vC;
+
+		// precompute face areas
+		vA = new THREE.Vector3();
+		vB = new THREE.Vector3();
+		vC = new THREE.Vector3();
+
+		// geometry._areas = [];
+		var il = verticesPosition.length / 9;
+
+		for ( i = 0; i < il; i ++ ) {
+
+			vA.set( verticesPosition[ i * 9 + 0 ], verticesPosition[ i * 9 + 1 ], verticesPosition[ i * 9 + 2 ] );
+			vB.set( verticesPosition[ i * 9 + 3 ], verticesPosition[ i * 9 + 4 ], verticesPosition[ i * 9 + 5 ] );
+			vC.set( verticesPosition[ i * 9 + 6 ], verticesPosition[ i * 9 + 7 ], verticesPosition[ i * 9 + 8 ] );
+
+			area = THREE.GeometryUtils.triangleArea( vA, vB, vC );
+			totalArea += area;
+
+			cumulativeAreas.push( totalArea );
+
+		}
+
+		// binary search cumulative areas array
+
+		function binarySearchIndices( value ) {
+
+			function binarySearch( start, end ) {
+
+				// return closest larger index
+				// if exact number is not found
+
+				if ( end < start )
+					return start;
+
+				var mid = start + Math.floor( ( end - start ) / 2 );
+
+				if ( cumulativeAreas[ mid ] > value ) {
+
+					return binarySearch( start, mid - 1 );
+
+				} else if ( cumulativeAreas[ mid ] < value ) {
+
+					return binarySearch( mid + 1, end );
+
+				} else {
+
+					return mid;
+
+				}
+
+			}
+
+			var result = binarySearch( 0, cumulativeAreas.length - 1 );
+			return result;
+
+		}
+
+		// pick random face weighted by face area
+
+		var r, index,
+			position = [],
+			normal = [],
+			uv = [];
+
+		var vertex;
+
+		var vertexA = { 
+			position: new THREE.Vector3(),
+			normal: new THREE.Vector3(),
+			uv: new THREE.Vector2()
+		};
+
+		var vertexB = { 
+			position: new THREE.Vector3(),
+			normal: new THREE.Vector3(),
+			uv: new THREE.Vector2()
+		};
+
+		var vertexC = { 
+			position: new THREE.Vector3(),
+			normal: new THREE.Vector3(),
+			uv: new THREE.Vector2()
+		};
+
+		for ( i = 0; i < n; i ++ ) {
+
+			r = Math.random() * totalArea;
+
+			index = binarySearchIndices( r );
+
+			// position
+			vertexA.position.set( verticesPosition[ index * 9 + 0 ], verticesPosition[ index * 9 + 1 ], verticesPosition[ index * 9 + 2 ] );
+			vertexA.normal.set( verticesNormal[ index * 9 + 0 ], verticesNormal[ index * 9 + 1 ], verticesNormal[ index * 9 + 2 ] );
+			vertexA.uv.set( verticesUV[ index * 6 + 0 ], verticesUV[ index * 6 + 1 ], verticesUV[ index * 6 + 2 ] );
+			
+			vertexB.position.set( verticesPosition[ index * 9 + 3 ], verticesPosition[ index * 9 + 4 ], verticesPosition[ index * 9 + 5 ] );
+			vertexB.normal.set( verticesNormal[ index * 9 + 3 ], verticesNormal[ index * 9 + 4 ], verticesNormal[ index * 9 + 5 ] );
+			vertexB.uv.set( verticesUV[ index * 6 + 3 ], verticesUV[ index * 6 + 4 ], verticesUV[ index * 6 + 5 ] );
+			
+			vertexC.position.set( verticesPosition[ index * 9 + 6 ], verticesPosition[ index * 9 + 7 ], verticesPosition[ index * 9 + 8 ] );
+			vertexC.normal.set( verticesNormal[ index * 9 + 6 ], verticesNormal[ index * 9 + 7 ], verticesNormal[ index * 9 + 8 ] );
+			vertexC.uv.set( verticesUV[ index * 6 + 6 ], verticesUV[ index * 6 + 7 ], verticesUV[ index * 6 + 8 ] );
+			
+			// vertexB.set( verticesPosition[ index * 9 + 3 ], verticesPosition[ index * 9 + 4 ], verticesPosition[ index * 9 + 5 ] );
+			// vertexC.set( verticesPosition[ index * 9 + 6 ], verticesPosition[ index * 9 + 7 ], verticesPosition[ index * 9 + 8 ] );
+			
+			vertex = THREE.GeometryUtils.randomPointWithAttributeInTriangle( vertexA, vertexB, vertexC );
+
+			position[ i ] = vertex.position;
+			normal[ i ] = vertex.normal;
+			uv[ i ] = vertex.uv;
+		}
+
+		return {
+			position: position,
+			normal: normal,
+			uv: uv
+		};
 
 	},
 

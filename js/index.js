@@ -170,23 +170,34 @@
 
             console.log(object);
 
+            // TODO: groups, complete obj support
             var bufferGeo = object.children[0].geometry;
 
             var particleCount = 1000;
-            var points = THREE.GeometryUtils.randomPointsInBufferGeometry( bufferGeo, particleCount );
+            var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
 
-            // TODO: GeometryUtils, random attributes (besides position)
-            var data = new Float32Array( particleCount * 4 );
-            for ( var i = 0, j = 0, l = data.length; i < l; i += 4, j += 1 ) {
-                data[ i ] = points[ j ].x;
-                data[ i + 1 ] = points[ j ].y;
-                data[ i + 2 ] = points[ j ].z;
-                data[ i + 3 ] = 1.0;
+
+            var position = new Float32Array( particleCount * 4 );
+            for ( var i = 0, j = 0, l = position.length; i < l; i += 4, j += 1 ) {
+                position[ i ] = points.position[ j ].x;
+                position[ i + 1 ] = points.position[ j ].y;
+                position[ i + 2 ] = points.position[ j ].z;
+                position[ i + 3 ] = 1.0;
+            }
+
+            var normal = new Float32Array( particleCount * 3 );
+            for ( i = 0, j = 0, l = normal.length; i < l; i += 3, j += 1 ) {
+                normal[ i ] = points.normal[ j ].x;
+                normal[ i + 1 ] = points.normal[ j ].y;
+                normal[ i + 2 ] = points.normal[ j ].z;
+                normal[ i + 3 ] = 1.0;
             }
 
 
+
             var geometry = new THREE.BufferGeometry();
-            geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
+            geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 4 ).setDynamic( true ) );
+            geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( true ) );
 
             pointMesh = new THREE.Points(geometry, particleMaterial);
             scene.add( pointMesh );
