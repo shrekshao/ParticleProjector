@@ -27,6 +27,7 @@
 	<script src="js/lib/dat.gui.min.js"></script>
 	<script src="js/lib/OrbitControls.js"></script>
 	<script src="js/lib/GeometryUtils.js"></script>
+	<!--<script src="js/lib/ImageUtils.js"></script>-->
 	<script src="js/lib/MTLLoader.js"></script>
 	<script src="js/lib/OBJLoader.js"></script>
 
@@ -69,11 +70,14 @@
 		// uniform float uTime;
 		uniform float uAlpha;
 
+		uniform sampler2D tDiffuse;
+
 		void main() 
 		{
 			// vec3 color = vec3(1.0, 0.0, 0.0);  // tmp
-			vec3 color = vNormal;
+			// vec3 color = vNormal;
 			// vec3 color = vec3(vUV, 0.5);
+			vec3 color = texture2D( tDiffuse, vUV ).rgb;
 
 			// // cos ? (from nop)
 			// vec2 tmpCoord = 0.5 * cos( M_2PI * gl_PointCoord + M_PI ) + 0.5;

@@ -24,10 +24,11 @@
     var gl;
     var isWebGL2 = true;
 
+    var particleCount = 10000;
 
     // temp cfg class
     var cfg = {
-        pointSize: 50.0, 
+        pointSize: 20.0, 
         pointAlpha: 1.0
     };
 
@@ -106,19 +107,7 @@
 
 
 
-        // custom particle shader test
-        particleMaterial = new THREE.ShaderMaterial( {
-            uniforms: {
-              'uPointSize': { type: 'f', value: cfg.pointSize },
-              'uAlpha': { type: 'f', value: cfg.pointAlpha },
-            },
-            vertexShader: document.getElementById( 'vs-particles' ).textContent,
-            fragmentShader: document.getElementById( 'fs-particles' ).textContent,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-            depthTest: true,
-            transparent: true
-          } );
+        
 
 
 
@@ -172,9 +161,26 @@
 
             // TODO: groups, complete obj support
             var bufferGeo = object.children[0].geometry;
+            var texture = object.children[0].material.map;
 
-            var particleCount = 1000;
+            
             var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
+
+            // custom particle shader test
+            particleMaterial = new THREE.ShaderMaterial( {
+                uniforms: {
+                    'uPointSize': { type: 'f', value: cfg.pointSize },
+                    'uAlpha': { type: 'f', value: cfg.pointAlpha },
+                    'tDiffuse': { type: 't', value: texture }
+                    // 'tDiffuse': { type: 't', value: THREE.ImageUtils.loadTexture( 'models/obj/sword/sword7.jpg' ) }
+                },
+                vertexShader: document.getElementById( 'vs-particles' ).textContent,
+                fragmentShader: document.getElementById( 'fs-particles' ).textContent,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                depthTest: true,
+                transparent: true, 
+            } );
 
 
             var position = new Float32Array( particleCount * 4 );
