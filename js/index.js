@@ -186,8 +186,8 @@
                 },
                 vertexShader: document.getElementById( 'vs-particles' ).textContent,
                 fragmentShader: document.getElementById( 'fs-particles' ).textContent,
-                // blending: THREE.AdditiveBlending,
-                blending: THREE.NormalBlending,
+                blending: THREE.AdditiveBlending,
+                // blending: THREE.NormalBlending,
                 depthWrite: false,
                 depthTest: true,
                 transparent: true

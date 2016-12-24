@@ -141,7 +141,7 @@ THREE.GeometryUtils = {
 			vector2.copy( vertexB.uv );
 			vector2.multiplyScalar( b );
 
-			point2.add( vector );
+			point2.add( vector2 );
 
 			vector2.copy( vertexC.uv );
 			vector2.multiplyScalar( c );
@@ -463,15 +463,15 @@ THREE.GeometryUtils = {
 			// position
 			vertexA.position.set( verticesPosition[ index * 9 + 0 ], verticesPosition[ index * 9 + 1 ], verticesPosition[ index * 9 + 2 ] );
 			vertexA.normal.set( verticesNormal[ index * 9 + 0 ], verticesNormal[ index * 9 + 1 ], verticesNormal[ index * 9 + 2 ] );
-			vertexA.uv.set( verticesUV[ index * 6 + 0 ], verticesUV[ index * 6 + 1 ], verticesUV[ index * 6 + 2 ] );
+			vertexA.uv.set( verticesUV[ index * 6 + 0 ], verticesUV[ index * 6 + 1 ] );
 			
 			vertexB.position.set( verticesPosition[ index * 9 + 3 ], verticesPosition[ index * 9 + 4 ], verticesPosition[ index * 9 + 5 ] );
 			vertexB.normal.set( verticesNormal[ index * 9 + 3 ], verticesNormal[ index * 9 + 4 ], verticesNormal[ index * 9 + 5 ] );
-			vertexB.uv.set( verticesUV[ index * 6 + 3 ], verticesUV[ index * 6 + 4 ], verticesUV[ index * 6 + 5 ] );
+			vertexB.uv.set( verticesUV[ index * 6 + 2 ], verticesUV[ index * 6 + 3 ] );
 			
 			vertexC.position.set( verticesPosition[ index * 9 + 6 ], verticesPosition[ index * 9 + 7 ], verticesPosition[ index * 9 + 8 ] );
 			vertexC.normal.set( verticesNormal[ index * 9 + 6 ], verticesNormal[ index * 9 + 7 ], verticesNormal[ index * 9 + 8 ] );
-			vertexC.uv.set( verticesUV[ index * 6 + 6 ], verticesUV[ index * 6 + 7 ], verticesUV[ index * 6 + 8 ] );
+			vertexC.uv.set( verticesUV[ index * 6 + 4 ], verticesUV[ index * 6 + 5 ] );
 			
 			// vertexB.set( verticesPosition[ index * 9 + 3 ], verticesPosition[ index * 9 + 4 ], verticesPosition[ index * 9 + 5 ] );
 			// vertexC.set( verticesPosition[ index * 9 + 6 ], verticesPosition[ index * 9 + 7 ], verticesPosition[ index * 9 + 8 ] );
