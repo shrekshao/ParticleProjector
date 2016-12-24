@@ -82,20 +82,23 @@
 			// // cos ? (from nop)
 			// vec2 tmpCoord = 0.5 * cos( M_2PI * gl_PointCoord + M_PI ) + 0.5;
 			// float alpha = tmpCoord.x * tmpCoord.y;
-
+			
+			vec2 cxy = 2.0 * gl_PointCoord - 1.0;
+			float r = dot(cxy, cxy);
+			if (r > 1.0) {
+				discard;
+			}
+			float falloff = pow(r-1.0, 12.0);
 			// dist
-			float alpha = 1.0 - min ( 1.0, 2.0 * length(gl_PointCoord - vec2(0.5, 0.5)) );
-
-			// // squared length
-			// vec2 r = gl_PointCoord - vec2(0.5, 0.5);
-			// float alpha = 1.0 - min ( 1.0, 4.0 * dot(r, r) ) ;
+			float alpha = falloff;
 
 			if (alpha <= 0.0)
 			{
 				discard;
 			}
+			falloff *= 3.0;
 
-			gl_FragColor = vec4( color, uAlpha * alpha );
+			gl_FragColor = vec4( color * vec3(falloff, falloff, falloff), uAlpha * alpha );
 		}
     </script>
 </head>

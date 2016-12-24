@@ -24,7 +24,7 @@
     var gl;
     var isWebGL2 = true;
 
-    var particleCount = 10000;
+    var particleCount = 100000;
 
     // temp cfg class
     var cfg = {
@@ -45,7 +45,7 @@
         // pointMesh.material.uniforms.uAlpha.value = value;
         // console.log('pointAlpha: ' + value);
     } );
-
+	
     function onWindowResize() {
 
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -165,30 +165,29 @@
 
             
             var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
-
             // custom particle shader test
             particleMaterial = new THREE.ShaderMaterial( {
                 uniforms: {
                     'uPointSize': { type: 'f', value: cfg.pointSize },
                     'uAlpha': { type: 'f', value: cfg.pointAlpha },
-                    'tDiffuse': { type: 't', value: texture }
-                    // 'tDiffuse': { type: 't', value: THREE.ImageUtils.loadTexture( 'models/obj/sword/sword7.jpg' ) }
+                    //'tDiffuse': { type: 't', value: texture }
+                    'tDiffuse': { type: 't', value: THREE.ImageUtils.loadTexture( 'models/obj/sword/sword7.jpg' ) }
                 },
                 vertexShader: document.getElementById( 'vs-particles' ).textContent,
                 fragmentShader: document.getElementById( 'fs-particles' ).textContent,
-                blending: THREE.AdditiveBlending,
+                // blending: THREE.AdditiveBlending,
+                blending: THREE.NormalBlending,
                 depthWrite: false,
                 depthTest: true,
                 transparent: true, 
             } );
 
 
-            var position = new Float32Array( particleCount * 4 );
-            for ( var i = 0, j = 0, l = position.length; i < l; i += 4, j += 1 ) {
+            var position = new Float32Array( particleCount * 3 );
+            for ( var i = 0, j = 0, l = position.length; i < l; i += 3, j += 1 ) {
                 position[ i ] = points.position[ j ].x;
                 position[ i + 1 ] = points.position[ j ].y;
                 position[ i + 2 ] = points.position[ j ].z;
-                position[ i + 3 ] = 1.0;
             }
 
             var normal = new Float32Array( particleCount * 3 );
@@ -207,7 +206,7 @@
 
 
             var geometry = new THREE.BufferGeometry();
-            geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 4 ).setDynamic( true ) );
+            geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 3 ).setDynamic( true ) );
             geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( true ) );
             geometry.addAttribute( 'uv', new THREE.BufferAttribute( uv, 2 ).setDynamic( true ) );
 
@@ -217,23 +216,13 @@
             success();
         } );
 
-        
-
-
-
     }
-
-
-
+var direction = new THREE.Vector3(0.03, 0.05, 0);
     function update() {
-
         requestAnimationFrame(update);
 
         renderer.render(scene, camera);
     }
-
-    
-
 
     init(update);
     // update();
