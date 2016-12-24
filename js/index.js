@@ -170,16 +170,15 @@
                 uniforms: {
                     'uPointSize': { type: 'f', value: cfg.pointSize },
                     'uAlpha': { type: 'f', value: cfg.pointAlpha },
-                    //'tDiffuse': { type: 't', value: texture }
-                    'tDiffuse': { type: 't', value: THREE.ImageUtils.loadTexture( 'models/obj/sword/sword7.jpg' ) }
+                    'tDiffuse': { type: 't', value: texture }
                 },
                 vertexShader: document.getElementById( 'vs-particles' ).textContent,
                 fragmentShader: document.getElementById( 'fs-particles' ).textContent,
-                // blending: THREE.AdditiveBlending,
-                blending: THREE.NormalBlending,
+                blending: THREE.AdditiveBlending,
+                // blending: THREE.NormalBlending,
                 depthWrite: false,
                 depthTest: true,
-                transparent: true, 
+                transparent: true
             } );
 
 
@@ -217,14 +216,19 @@
         } );
 
     }
-var direction = new THREE.Vector3(0.03, 0.05, 0);
+
+    // var direction = new THREE.Vector3(0.03, 0.05, 0);
+
     function update() {
         requestAnimationFrame(update);
 
         renderer.render(scene, camera);
     }
 
-    init(update);
+
+    window.onload = function() {
+        init(update);
+    };
     // update();
 
 })();
