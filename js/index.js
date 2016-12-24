@@ -190,7 +190,12 @@
                 normal[ i ] = points.normal[ j ].x;
                 normal[ i + 1 ] = points.normal[ j ].y;
                 normal[ i + 2 ] = points.normal[ j ].z;
-                normal[ i + 3 ] = 1.0;
+            }
+
+            var uv = new Float32Array( particleCount * 2 );
+            for ( i = 0, j = 0, l = uv.length; i < l; i += 2, j += 1 ) {
+                uv[ i ] = points.uv[ j ].x;
+                uv[ i + 1 ] = points.uv[ j ].y;
             }
 
 
@@ -198,6 +203,7 @@
             var geometry = new THREE.BufferGeometry();
             geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 4 ).setDynamic( true ) );
             geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( true ) );
+            geometry.addAttribute( 'uv', new THREE.BufferAttribute( uv, 2 ).setDynamic( true ) );
 
             pointMesh = new THREE.Points(geometry, particleMaterial);
             scene.add( pointMesh );

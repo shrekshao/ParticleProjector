@@ -39,6 +39,7 @@
 		uniform float uPointSize;
 
 		varying vec3 vNormal;
+		varying vec2 vUV;
 
 		void main()
 		{
@@ -48,6 +49,7 @@
 			float camDist = length(camToPos);
 
 			vNormal = normalMatrix * normal;
+			vUV = uv;
 
 			gl_PointSize = max( uPointSize * PS_CAM_MAX_DIST / camDist, 1.0 );
 
@@ -62,6 +64,7 @@
 
 		// varying vec3 vColor;
 		varying vec3 vNormal;
+		varying vec2 vUV;
 
 		// uniform float uTime;
 		uniform float uAlpha;
@@ -70,6 +73,7 @@
 		{
 			// vec3 color = vec3(1.0, 0.0, 0.0);  // tmp
 			vec3 color = vNormal;
+			// vec3 color = vec3(vUV, 0.5);
 
 			// // cos ? (from nop)
 			// vec2 tmpCoord = 0.5 * cos( M_2PI * gl_PointCoord + M_PI ) + 0.5;
