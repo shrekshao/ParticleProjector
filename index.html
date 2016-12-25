@@ -40,6 +40,8 @@
 		uniform float uPointSize;
 
 		uniform float uTime;
+		uniform float uKtime;
+		uniform vec4 uConcentration;
 
 		varying vec3 vNormal;
 		varying vec2 vUV;
@@ -49,6 +51,10 @@
 			vec3 pos = position;    // temp
 			// pos += 1.0 * vec3( 0.1 * cos(0.1 * (uTime + pos.y) ), 1.0 * sin(0.13 * uTime * pos.z), 0.1 * sin(0.01 * uTime * pos.x + 3.14) );		// temp
 			// pos.x += 0.000000001 * sin(0.0);
+			if (uConcentration.w < 1.0){
+				vec3 offset = vec3(uConcentration.x, uConcentration.y, uConcentration.z) - pos;
+				pos += offset * uKtime * 0.05;
+			}
 
 			vec3 camToPos = pos - cameraPosition;
 			float camDist = length(camToPos);
