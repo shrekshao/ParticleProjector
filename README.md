@@ -1,6 +1,6 @@
 #Particle Projector
 
-By ShrekShao
+By ShrekShao & Stonebird
 
 [Live Demo](http://shrekshao.github.io/ParticleProjector/)
 
