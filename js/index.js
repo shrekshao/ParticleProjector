@@ -24,7 +24,7 @@
     var gl;
     var isWebGL2 = true;
 
-    var particleCount = 400000;
+    var particleCount = 4000;//400000;
 
     // temp cfg class
     var cfg = {
@@ -34,6 +34,8 @@
 
     var particleMaterial;
     var pointMesh;
+    
+    var leftMouseKeyDown;
 
     gui.add( cfg, 'pointSize', 1.0, 100.0 ).onChange( function(value) {
         particleMaterial.uniforms.uPointSize.value = value;
@@ -180,7 +182,8 @@
             particleMaterial = new THREE.ShaderMaterial( {
                 uniforms: {
                     'uTime': { type: 'f', value: 0.0 },
-
+                    'uKtime': { value: 0.0 },
+                    'uConcentration': {value: new THREE.Vector4(0.0, 0.0, 0.0, 1.0)},
                     'uPointSize': { type: 'f', value: cfg.pointSize },
                     'uAlpha': { type: 'f', value: cfg.pointAlpha },
                     'tDiffuse': { type: 't', value: texture }
@@ -216,8 +219,6 @@
                 uv[ i + 1 ] = points.uv[ j ].y;
             }
 
-
-
             var geometry = new THREE.BufferGeometry();
             geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 3 ).setDynamic( true ) );
             geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( true ) );
@@ -226,6 +227,29 @@
             pointMesh = new THREE.Points(geometry, particleMaterial);
             scene.add( pointMesh );
 
+            document.addEventListener('mousedown', function(e){
+                if (e.which == 1){
+                    leftMouseKeyDown = true;
+                    
+                    var vec = new THREE.Vector3(
+                        ( e.offsetX / window.innerWidth ) * 2 - 1, 
+                        - ( e.offsetY / window.innerHeight ) * 2 + 1, 
+                        0.5);
+                    
+                    vec.unproject(camera);
+                    
+                    var vec = new THREE.Vector4(vec.x, vec.y, vec.z, 0.0);
+                    
+                    particleMaterial.uniforms.uConcentration.value = vec;
+                }
+            });
+            document.addEventListener('mouseup', function(e){
+                if (e.which == 1){
+                    leftMouseKeyDown = false;
+                    particleMaterial.uniforms.uKtime.value = 0.0;
+                    particleMaterial.uniforms.uConcentration.value = new THREE.Vector3(0.0, 0.0, 0.0, 1.0);
+                }
+            });
 
             // scene.add(object);
 
@@ -239,6 +263,9 @@
     function update() {
         requestAnimationFrame(update);
         particleMaterial.uniforms.uTime.value += 0.1;
+        if (leftMouseKeyDown){
+            particleMaterial.uniforms.uKtime.value += 0.1;
+        }
         renderer.render(scene, camera);
     }
 
