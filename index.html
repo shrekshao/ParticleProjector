@@ -29,10 +29,63 @@
 	<script src="js/lib/GeometryUtils.js"></script>
 	<!--<script src="js/lib/ImageUtils.js"></script>-->
 	<script src="js/lib/MTLLoader.js"></script>
-	<script src="js/lib/OBJLoader.js"></script>
+	<script src="js/lib/OBJLoader.js"></script>	
 
-    <!--<script src="js/App.js"></script>-->
-	
+
+
+	<script id="vs-raw-sim" type="x-shader/x-vertex">
+		precision highp float;
+		precision highp int;
+
+		attribute vec3 position;
+		attribute vec2 uv;
+
+		varying vec2 vUV;
+
+		void main()	
+		{
+			vUV = uv;
+			gl_Position = vec4( position, 1.0 );
+		}
+	</script>
+
+	<script id="fs-raw-sim" type="x-shader/x-fragment">
+		precision highp float;
+		precision highp int;
+
+		uniform sampler2D tPrevPos;
+		uniform sampler2D tCurrPos;
+		uniform sampler2D tInitPos;	// pos given by init random points in model triangles
+
+		uniform float uDeltaT;	// value given by fixed update (based on time, not frame)
+		uniform float uTime;
+
+
+		varying vec2 vUV;
+
+		void main()	
+		{
+			vec3 prevPos = texture2D(tPrevPos, vUV).rgb;
+			vec3 currPos = texture2D(tCurrPos, vUV).rgb;
+			vec3 vel = (currPos - prevPos) / uDeltaT;
+			vec3 acc = vec3(0.0);
+
+			// simulation part
+			vec3 initPos = texture2D(tInitPos, vUV).rgb;
+			vec3 dir = currPos - initPos;
+			acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
+
+
+
+			// apply updates
+			vel = K_VEL_DECAY * vel + acc * uDeltaT;
+			currPos += vel * uDeltaT;
+
+			gl_FragColor = vec4(currPos, 1.0);
+		}
+	</script>
+
+
 
 	<script id="vs-particles" type="x-shader/x-vertex">
 		#define PS_CAM_MAX_DIST 12.0
@@ -118,6 +171,11 @@
 			// gl_FragColor = vec4( color * vec3(falloff, falloff, falloff), uAlpha * alpha );
 		}
     </script>
+
+
+
+	<!--<script src="js/App.js"></script>-->
+	<script src="js/Simulation.js"></script>
 </head>
 
 <body>

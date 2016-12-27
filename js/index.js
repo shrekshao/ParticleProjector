@@ -24,7 +24,7 @@
     var gl;
     var isWebGL2 = true;
 
-    var particleCount = 400000;
+    var particleCount = 40000;
 
     // temp cfg class
     var cfg = {
@@ -222,6 +222,12 @@
             geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 3 ).setDynamic( true ) );
             geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( true ) );
             geometry.addAttribute( 'uv', new THREE.BufferAttribute( uv, 2 ).setDynamic( true ) );
+
+            // geometry.attributes.position.array;
+            
+            var simulation = new Simulation( renderer, isWebGL2, particleCount, geometry.attributes.position.array );
+
+
 
             pointMesh = new THREE.Points(geometry, particleMaterial);
             scene.add( pointMesh );
