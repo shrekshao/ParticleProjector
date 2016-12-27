@@ -1,8 +1,22 @@
 // texture fbo / transform feedback for particle simulation
 
-var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
+var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
+
+    // not webgl2
+    var gpuCompute = new GPUComputationRenderer( simWidth, simWidth, renderer );
+
+
+    // var dtPos = gpuCompute.createTexture();
+    // var dtVel = gpuCompute.createTexture();
+
+    // dtPosition.
+
+
+
     var _renderer = renderer;
     var _isWebGL2 = isWebGL2;
+
+    var numParticle = simWidth * simWidth;
 
     var _simTexSideLen = Math.ceil( Math.sqrt( numParticle ) );
 
@@ -22,14 +36,14 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
         -10000, 10000 );
     _cameraRTT.position.z = -10;
 
-    renderer.extensions.get( "OES_texture_float" );
+    // renderer.extensions.get( "OES_texture_float" );
     
     var _initPosTexture = new THREE.DataTexture( 
         initPosTypedArray, 
-        // _simTexSideLen,
-        // _simTexSideLen,
-        200,
-        200,
+        simWidth,
+        simWidth,
+        // 200,
+        // 200,
         THREE.RGBFormat, 
         THREE.FloatType, 
         THREE.ClampToEdgeWrapping,
@@ -37,11 +51,12 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
         THREE.NearestFilter,
         THREE.NearestFilter
     );
+    _initPosTexture.needsUpdate = true;
 
     // image is not deep copied, ? will it get flushed?
-    var _target1 = _createTarget(_simTexSideLen, _simTexSideLen);
+    var _target1 = _createTarget(simWidth, simWidth);
     // _target1.texture = _initPosTexture.clone();
-    var _target2 = _createTarget(_simTexSideLen, _simTexSideLen);
+    var _target2 = _createTarget(simWidth, simWidth);
     // _target2.texture = _initPosTexture.clone();
 
 

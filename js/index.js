@@ -24,7 +24,9 @@
     var gl;
     var isWebGL2 = true;
 
-    var particleCount = 40000;
+    var simWidth = 200;
+    // var particleCount = 40000;
+    var particleCount = simWidth * simWidth;
 
     // temp cfg class
     var cfg = {
@@ -230,7 +232,7 @@
 
             // geometry.attributes.position.array;
             
-            simulation = new Simulation( renderer, isWebGL2, particleCount, geometry.attributes.position.array );
+            simulation = new Simulation( renderer, isWebGL2, simWidth, geometry.attributes.position.array );
 
 
 
