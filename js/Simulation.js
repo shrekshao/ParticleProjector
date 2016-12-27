@@ -26,9 +26,11 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
     
     var _initPosTexture = new THREE.DataTexture( 
         initPosTypedArray, 
-        _simTexSideLen,
-        _simTexSideLen,
-        THREE.RGBAFormat, 
+        // _simTexSideLen,
+        // _simTexSideLen,
+        200,
+        200,
+        THREE.RGBFormat, 
         THREE.FloatType, 
         THREE.ClampToEdgeWrapping,
         THREE.ClampToEdgeWrapping,
