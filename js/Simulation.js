@@ -32,8 +32,9 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
     );
 
     var _target1 = _createTarget(_simTexSideLen, _simTexSideLen);
-    _target1.texture.clone(_initPosTexture);
+    _target1.texture = _initPosTexture.clone();
     var _target2 = _createTarget(_simTexSideLen, _simTexSideLen);
+    _target2.texture = _initPosTexture.clone();
 
 
     var _simulationMaterial = new THREE.RawShaderMaterial( {

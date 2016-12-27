@@ -73,7 +73,8 @@
 			// simulation part
 			vec3 initPos = texture2D(tInitPos, vUV).rgb;
 			vec3 dir = currPos - initPos;
-			acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
+			// acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
+			acc = dot(dir, dir);
 
 
 
