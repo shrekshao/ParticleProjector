@@ -18,10 +18,8 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
     //     -10000, 10000 );
     // _cameraRTT.position.z = 100;
 
-    var _target1 = _createTarget(_simTexSideLen, _simTexSideLen);
-    var _target2 = _createTarget(_simTexSideLen, _simTexSideLen);
-
-    var _initPosTexture = THREE.DataTexture( 
+    
+    var _initPosTexture = new THREE.DataTexture( 
         initPosTypedArray, 
         _simTexSideLen,
         _simTexSideLen,
@@ -32,6 +30,10 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
         THREE.NearestFilter,
         THREE.NearestFilter
     );
+
+    var _target1 = _createTarget(_simTexSideLen, _simTexSideLen);
+    _target1.texture.clone(_initPosTexture);
+    var _target2 = _createTarget(_simTexSideLen, _simTexSideLen);
 
 
     var _simulationMaterial = new THREE.RawShaderMaterial( {
@@ -100,7 +102,7 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
         var target = new THREE.WebGLRenderTarget(width, height, {
             minFilter: THREE.NearestFilter,
             magFilter: THREE.NearestFilter,
-            format: THREE.RGBAFormat,
+            format: THREE.RGBFormat,
             type: THREE.FloatType,
             depthBuffer: false,
             stencilBuffer: false
