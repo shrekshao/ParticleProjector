@@ -73,8 +73,10 @@
 			// simulation part
 			vec3 initPos = texture2D(tInitPos, vUV).rgb;
 			vec3 dir = currPos - initPos;
+			float dist = length(dir);
+			dir /= dist;
 			// acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
-			acc = dot(dir, dir);
+			acc = dir * dist;
 
 
 
@@ -82,7 +84,14 @@
 			vel = K_VEL_DECAY * vel + acc * uDeltaT;
 			currPos += vel * uDeltaT;
 
-			gl_FragColor = vec4(currPos, 1.0);
+			// gl_FragColor = vec4(currPos, 1.0);
+			// gl_FragColor = vec4(1.0);
+			// gl_FragColor = vec4(prevPos, 1.0);
+			// gl_FragColor = vec4(vUV, 0.0, 1.0);
+
+
+			// vec3 initPos = texture2D(tInitPos, vUV).rgb;
+			gl_FragColor = vec4(abs(initPos), 1.0);
 		}
 	</script>
 

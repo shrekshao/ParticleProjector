@@ -8,16 +8,21 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
 
     // var _size = _renderer.getSize();
 
-    // // TODO: properly handle windowResize
-    // // camera used for texture buffer rendering
-    // var _cameraRTT = new THREE.OrthographicCamera( 
-    //     _size.width / - 2, 
-    //     _size.width / 2, 
-    //     _size.height / 2, 
-    //     _size.height / - 2, 
-    //     -10000, 10000 );
-    // _cameraRTT.position.z = 100;
+    // TODO: properly handle windowResize
+    // camera used for texture buffer rendering
+    var _cameraRTT = new THREE.OrthographicCamera( 
+        // _size.width / - 2, 
+        // _size.width / 2, 
+        // _size.height / 2, 
+        // _size.height / - 2, 
+        - 1,
+        1,
+        1,
+        - 1,
+        -10000, 10000 );
+    _cameraRTT.position.z = -10;
 
+    renderer.extensions.get( "OES_texture_float" );
     
     var _initPosTexture = new THREE.DataTexture( 
         initPosTypedArray, 
@@ -31,10 +36,11 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
         THREE.NearestFilter
     );
 
+    // image is not deep copied, ? will it get flushed?
     var _target1 = _createTarget(_simTexSideLen, _simTexSideLen);
-    _target1.texture = _initPosTexture.clone();
+    // _target1.texture = _initPosTexture.clone();
     var _target2 = _createTarget(_simTexSideLen, _simTexSideLen);
-    _target2.texture = _initPosTexture.clone();
+    // _target2.texture = _initPosTexture.clone();
 
 
     var _simulationMaterial = new THREE.RawShaderMaterial( {
@@ -52,8 +58,8 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
         },
         vertexShader: document.getElementById( 'vs-raw-sim' ).textContent,
         fragmentShader: document.getElementById( 'fs-raw-sim' ).textContent,
-        side: THREE.DoubleSide,
-        transparent: true
+        
+        transparent: false
     } );
 
 
@@ -65,10 +71,12 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
     // TODO: maybe a triangle to avoid aliasing on the edge
     var _scene = new THREE.Scene();
 
-    var _plane = new THREE.PlaneBufferGeometry( 1.0, 1.0 );
+    var _plane = new THREE.PlaneBufferGeometry( 2.0, 2.0 );
     var _quad = new THREE.Mesh( _plane, _simulationMaterial );
 
     _scene.add(_quad);
+
+    // _checkSupport();
 
 
     function _checkSupport() {
@@ -117,9 +125,18 @@ var Simulation = function (renderer, isWebGL2, numParticle, initPosTypedArray) {
 
 
     this.update = function (dt, t) {
-        _simulationMaterial.material.uniforms.uDeltaT.value = dt;
-        _simulationMaterial.material.uniforms.uTime.value = t;
+        _simulationMaterial.uniforms.uDeltaT.value = dt;
+        _simulationMaterial.uniforms.uTime.value = t;
 
+        _simulationMaterial.uniforms.tPrevPos.value = _target2.texture;
+        _simulationMaterial.uniforms.tCurrPos.value = _target1.texture;
+
+
+        renderer.render(_scene, _cameraRTT);
+
+        var tmp_target = _target1;
+        _target1 = _target2;
+        _target2 = tmp_target;
 
     };
 

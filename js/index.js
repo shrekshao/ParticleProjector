@@ -35,6 +35,11 @@
     var particleMaterial;
     var pointMesh;
 
+
+    var simulation;
+
+
+
     gui.add( cfg, 'pointSize', 1.0, 100.0 ).onChange( function(value) {
         particleMaterial.uniforms.uPointSize.value = value;
         // pointMesh.material.uniforms.uPointSize.value = value;
@@ -225,7 +230,7 @@
 
             // geometry.attributes.position.array;
             
-            var simulation = new Simulation( renderer, isWebGL2, particleCount, geometry.attributes.position.array );
+            simulation = new Simulation( renderer, isWebGL2, particleCount, geometry.attributes.position.array );
 
 
 
@@ -245,7 +250,11 @@
     function update() {
         requestAnimationFrame(update);
         particleMaterial.uniforms.uTime.value += 0.1;
-        renderer.render(scene, camera);
+
+
+        simulation.update(0.1, particleMaterial.uniforms.uTime.value);
+
+        // renderer.render(scene, camera);
     }
 
 
