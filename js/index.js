@@ -15,8 +15,10 @@
 
     var camera, tick = 0,
         scene, renderer, clock = new THREE.Clock(true),
-        controls, gui = new dat.GUI(),
-        options, spawnerOptions, particleSystem;
+        controls, gui = new dat.GUI();
+
+    var backgroundScene;
+    var backgroundCamera;
 
     var container;
     var canvas;
@@ -58,6 +60,9 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
+        backgroundCamera.aspect = window.innerWidth / window.innerHeight;
+        backgroundCamera.updateProjectionMatrix();
+
         renderer.setSize(window.innerWidth, window.innerHeight);
 
     }
@@ -66,6 +71,7 @@
 
     var objLoader = new THREE.OBJLoader();
     var mtlLoader = new THREE.MTLLoader();
+    var textureLoader = new THREE.TextureLoader();
 
 
     // stonebird teach me how to use require
@@ -123,12 +129,12 @@
         // scene
         scene = new THREE.Scene();
 
-        var ambient = new THREE.AmbientLight( 0x444444 );
-        scene.add( ambient );
+        // var ambient = new THREE.AmbientLight( 0x444444 );
+        // scene.add( ambient );
 
-        var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-        directionalLight.position.set( 0, 0, 1 ).normalize();
-        scene.add( directionalLight );
+        // var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+        // directionalLight.position.set( 0, 0, 1 ).normalize();
+        // scene.add( directionalLight );
 
         // var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
         // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -163,6 +169,13 @@
         // scene.add( pointMesh );
 
 
+
+        // background scene
+        backgroundScene = new THREE.Scene();
+        // var backgroundDirectionalLight = new THREE.DirectionalLight( 0xffffff );
+        // backgroundDirectionalLight.position.set( 0, 0, -1 ).normalize();
+        // backgroundScene.add( backgroundDirectionalLight );
+        
 
 
         loadObjModel( {
@@ -258,7 +271,63 @@
 
             // scene.add(object);
 
-            success();
+            // success();
+
+
+
+
+
+
+            textureLoader.load( 'assets/3.jpg', function ( backgroundTexture ) {
+            // textureLoader.load( 'assets/sword7.jpg', function ( backgroundTexture ) {
+                backgroundTexture.generateMipmaps = false;
+                backgroundTexture.magFilter = THREE.NearestFilter;
+                backgroundTexture.minFilter = THREE.NearestFilter;
+                backgroundTexture.wrapS = THREE.ClampToEdgeWrapping;
+                backgroundTexture.wrapT = THREE.ClampToEdgeWrapping;
+                backgroundTexture.needsUpdate = true;
+
+
+                var scale = backgroundTexture.image.height / backgroundTexture.image.width;
+                backgroundCamera = new THREE.OrthographicCamera( 
+                    // backgroundTexture.image.width / - 2, 
+                    // backgroundTexture.image.width / 2, 
+                    // backgroundTexture.image.height / 2, 
+                    // backgroundTexture.image.height / - 2, 
+                    - 1 ,
+                    1 ,
+                    1  * window.innerHeight / window.innerWidth,
+                    - 1 * window.innerHeight / window.innerWidth,
+                    -1000, 
+                    1000 );
+                backgroundCamera.position.z = 10;
+                backgroundCamera.position.y = 0;
+
+                var backgroundMesh = new THREE.Mesh(
+                    new THREE.PlaneGeometry(
+                        2, 
+                        2 * scale, 
+                        0
+                    ),
+                    new THREE.MeshBasicMaterial({
+                        map: backgroundTexture,
+                        color: 0x555555
+                    }));
+                backgroundMesh.position.y = 0;
+
+                backgroundMesh.material.depthTest = false;
+                backgroundMesh.material.depthWrite = false;
+
+                backgroundScene.add(backgroundMesh);
+                backgroundScene.add(backgroundCamera);
+
+                
+                success();
+                
+            } );
+
+
+
         } );
 
     }
@@ -268,11 +337,14 @@
     function update() {
         requestAnimationFrame(update);
         particleMaterial.uniforms.uTime.value += 0.1;
-
+        // TODO: fixed update
 
         simulation.update(0.1, particleMaterial.uniforms.uTime.value);
 
+        renderer.render(backgroundScene, backgroundCamera); //temp
+        renderer.autoClear = false;
         renderer.render(scene, camera);
+        renderer.autoClear = true;
     }
 
 

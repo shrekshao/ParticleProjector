@@ -403,10 +403,7 @@
 
 		void main() 
 		{
-			vec3 color = vec3(1.0, 0.0, 0.0);  // tmp
-			// vec3 color = vNormal;
-			// vec3 color = vec3(vUV, 0.5);
-			// vec3 color = texture2D( tDiffuse, vUV ).rgb;
+			
 
 			// // cos ? (from nop)
 			// vec2 tmpCoord = 0.5 * cos( M_2PI * gl_PointCoord + M_PI ) + 0.5;
@@ -421,6 +418,15 @@
 			{
 				discard;
 			}
+
+
+			// vec3 color = vec3(1.0, 0.0, 0.0);  // tmp
+			// vec3 color = vNormal;
+			// vec3 color = vec3(vUV, 0.5);
+			// vec3 color = texture2D( tDiffuse, vUV ).rgb;
+
+			vec3 color = mix( vec3(1.0, 0.0, 0.0) , vec3(0.8, 0.3, 0.0) , alpha );
+
 			gl_FragColor = vec4( color, uAlpha * alpha );
 
 
