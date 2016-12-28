@@ -2,7 +2,7 @@
 /*
 (function() {
     'use strict'
-    
+
     var app = new App();
 })();
 */
@@ -30,7 +30,7 @@
 
     // temp cfg class
     var cfg = {
-        pointSize: 30.0, 
+        pointSize: 40.0,
         pointAlpha: 1.0
     };
 
@@ -52,7 +52,7 @@
         // pointMesh.material.uniforms.uAlpha.value = value;
         // console.log('pointAlpha: ' + value);
     } );
-	
+
     function onWindowResize() {
 
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -75,7 +75,7 @@
         mtlLoader.setPath(params.baseUrl);    //mtl base path
         mtlLoader.load(params.mtlName, function(materials) {
             materials.preload();
-            
+
             objLoader.setMaterials(materials);
             objLoader.setPath(params.baseUrl);
             objLoader.load(params.objName, function(object){
@@ -111,11 +111,11 @@
         camera.position.z = 160;
         camera.position.x = -100;
         controls = new THREE.OrbitControls( camera, renderer.domElement );
-        
 
 
 
-        
+
+
 
 
 
@@ -155,7 +155,7 @@
         // var geometry = new THREE.BufferGeometry();
         // geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4 ).setDynamic( true ) );
 
-        
+
 
         // pointMesh = new THREE.Points(geometry, particleMaterial);
 
@@ -182,7 +182,7 @@
             var texture = object.children[0].material.map;
             // var texture = object.children[0].material.materials[0].map;
 
-            
+
             var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
             // custom particle shader test
             particleMaterial = new THREE.ShaderMaterial( {
@@ -206,11 +206,13 @@
 
 
             var offsetY = -50;  //tmp
+            var offsetX = 50;
+            var offsetZ = 30;
             var position = new Float32Array( particleCount * 3 );
             for ( var i = 0, j = 0, l = position.length; i < l; i += 3, j += 1 ) {
-                position[ i ] = points.position[ j ].x;
+                position[ i ] = points.position[ j ].x + offsetX;
                 position[ i + 1 ] = points.position[ j ].y + offsetY;
-                position[ i + 2 ] = points.position[ j ].z;
+                position[ i + 2 ] = points.position[ j ].z + offsetZ;
             }
 
             var normal = new Float32Array( particleCount * 3 );
@@ -247,7 +249,7 @@
             geometry.addAttribute( 'uvIdx', new THREE.BufferAttribute( uvIdx, 2 ).setDynamic( false ) )
 
             // geometry.attributes.position.array;
-            
+
             simulation = new Simulation( renderer, isWebGL2, simWidth, geometry.attributes.position.array );
             simulation.registerUniform( particleMaterial.uniforms.tPos );
 
