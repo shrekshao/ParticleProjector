@@ -59,15 +59,49 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
     );
     _initPosTexture.needsUpdate = true;
 
-    // image is not deep copied, ? will it get flushed?
+    // // image is not deep copied, ? will it get flushed?
+    // _target1 = _createTarget(simWidth, simWidth);
+    // _target1.texture = _initPosTexture.clone();
+    // // _target1.texture.image.data = new Float32Array(_initPosTexture.image.data);
+    // // _target1.texture.image.data = new Float32Array(numParticle * 3);
+    // _target1.texture.needsUpdate = true;
+    // _target2 = _createTarget(simWidth, simWidth);
+    // _target2.texture = _initPosTexture.clone();
+    // // _target2.texture.image.data = new Float32Array(_initPosTexture.image.data);
+    // // _target2.texture.image.data = new Float32Array(numParticle * 3);
+    // _target2.texture.needsUpdate = true;
+    // _target3 = _createTarget(simWidth, simWidth);
+
+
+
+    var randomPos = new Float32Array(numParticle * 3);
+    for ( var i = 0, j = 0, l = randomPos.length; i < l; i += 3, j += 1 ) {
+        randomPos[ i ] = ( Math.random() - 0.5 ) * 100;
+        randomPos[ i + 1 ] = ( Math.random() - 0.5 ) * 100;
+        // randomPos[ i + 2 ] = ( Math.random() - 0.5 ) * 100;
+        randomPos[ i + 2 ] = 0;
+    }
+
     _target1 = _createTarget(simWidth, simWidth);
-    _target1.texture = _initPosTexture.clone();
-    _target1.texture.image.data = new Float32Array(_initPosTexture.image.data);
+    _target1.texture = new THREE.DataTexture( 
+        // new Float32Array(numParticle * 3), 
+        randomPos,
+        simWidth,
+        simWidth,
+        // 200,
+        // 200,
+        THREE.RGBFormat, 
+        THREE.FloatType, 
+        THREE.UVMapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.NearestFilter,
+        THREE.NearestFilter
+    );
     _target1.texture.needsUpdate = true;
+
     _target2 = _createTarget(simWidth, simWidth);
-    _target2.texture = _initPosTexture.clone();
-    _target2.texture.image.data = new Float32Array(_initPosTexture.image.data);
-    _target2.texture.needsUpdate = true;
+
     _target3 = _createTarget(simWidth, simWidth);
 
     var _currUpdateTarget = 3;
@@ -84,7 +118,8 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
             // "uInputPosAccel": { type: "v4", value: new THREE.Vector4(0,0,0,0) },
         },
         defines: {
-            K_VEL_DECAY: '0.99'
+            // K_VEL_DECAY: '0.99'
+            K_VEL_DECAY: '0.9'
         },
         vertexShader: document.getElementById( 'vs-raw-sim' ).textContent,
         fragmentShader: document.getElementById( 'fs-raw-sim' ).textContent,
@@ -186,6 +221,10 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
         else {
             console.error("Simulation target idx: something's wrong!");
         }
+
+        // _simulationMaterial.uniforms.tPrevPos.value = _simulationMaterial.uniforms.tCurrPos.value;
+        // _simulationMaterial.uniforms.tCurrPos.value = _outTargetPtr.texture;
+        // _renderer.render(_scene, _cameraRTT);
 
         _updateRegisteredUniforms();
 

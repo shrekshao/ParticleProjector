@@ -24,7 +24,7 @@
     var gl;
     var isWebGL2 = true;
 
-    var simWidth = 200;
+    var simWidth = 256;
     // var particleCount = 40000;
     var particleCount = simWidth * simWidth;
 
@@ -107,8 +107,9 @@
 
 
         // camera
-        camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 1, 10000 );
-        camera.position.z = 100;
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.z = 160;
+        camera.position.y = 0;
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         
 
@@ -204,10 +205,11 @@
             } );
 
 
+            var offsetY = -50;  //tmp
             var position = new Float32Array( particleCount * 3 );
             for ( var i = 0, j = 0, l = position.length; i < l; i += 3, j += 1 ) {
                 position[ i ] = points.position[ j ].x;
-                position[ i + 1 ] = points.position[ j ].y;
+                position[ i + 1 ] = points.position[ j ].y + offsetY;
                 position[ i + 2 ] = points.position[ j ].z;
             }
 
