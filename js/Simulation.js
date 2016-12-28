@@ -2,23 +2,22 @@
 
 var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
 
-    // not webgl2
-    var gpuCompute = new GPUComputationRenderer( simWidth, simWidth, renderer );
 
+    // // -------------------- use THREE.js GPUCompute Util --------------
+    // // not webgl2
+    // var gpuCompute = new GPUComputationRenderer( simWidth, simWidth, renderer );
+    // // var dtPos = gpuCompute.createTexture();
+    // // var dtVel = gpuCompute.createTexture();
 
-    // var dtPos = gpuCompute.createTexture();
-    // var dtVel = gpuCompute.createTexture();
-
-    // dtPosition.
-
-
+    // // dtPosition.
+    // // ----------------------------------------------------------------
 
     var _renderer = renderer;
     var _isWebGL2 = isWebGL2;
 
     var numParticle = simWidth * simWidth;
 
-    var _simTexSideLen = Math.ceil( Math.sqrt( numParticle ) );
+    // var _simTexSideLen = Math.ceil( Math.sqrt( numParticle ) );
 
     // var _size = _renderer.getSize();
 
@@ -46,6 +45,7 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
         // 200,
         THREE.RGBFormat, 
         THREE.FloatType, 
+        THREE.UVMapping,
         THREE.ClampToEdgeWrapping,
         THREE.ClampToEdgeWrapping,
         THREE.NearestFilter,
@@ -55,9 +55,13 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
 
     // image is not deep copied, ? will it get flushed?
     var _target1 = _createTarget(simWidth, simWidth);
-    // _target1.texture = _initPosTexture.clone();
+    _target1.texture = _initPosTexture.clone();
+    _target1.texture.image.data = new Float32Array(_initPosTexture.image.data);
+    _target1.texture.needsUpdate = true;
     var _target2 = _createTarget(simWidth, simWidth);
-    // _target2.texture = _initPosTexture.clone();
+    _target2.texture = _initPosTexture.clone();
+    _target2.texture.image.data = new Float32Array(_initPosTexture.image.data);
+    _target2.texture.needsUpdate = true;
 
 
     var _simulationMaterial = new THREE.RawShaderMaterial( {

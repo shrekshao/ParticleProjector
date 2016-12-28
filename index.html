@@ -30,7 +30,7 @@
 	<!--<script src="js/lib/ImageUtils.js"></script>-->
 	<script src="js/lib/MTLLoader.js"></script>
 	<script src="js/lib/OBJLoader.js"></script>	
-	<script src="js/lib/GPUComputationRenderer.js"></script>	
+	<!--<script src="js/lib/GPUComputationRenderer.js"></script>	-->
 
 
 
@@ -85,14 +85,12 @@
 			vel = K_VEL_DECAY * vel + acc * uDeltaT;
 			currPos += vel * uDeltaT;
 
-			// gl_FragColor = vec4(currPos, 1.0);
+			gl_FragColor = vec4(abs(currPos), 1.0);
 			// gl_FragColor = vec4(1.0);
-			// gl_FragColor = vec4(prevPos, 1.0);
+			// gl_FragColor = vec4(abs(prevPos), 1.0);
 			// gl_FragColor = vec4(vUV, 0.0, 1.0);
 
-
-			// vec3 initPos = texture2D(tInitPos, vUV).rgb;
-			gl_FragColor = vec4(abs(initPos), 1.0);
+			// gl_FragColor = vec4(abs(initPos), 1.0);
 		}
 	</script>
 
