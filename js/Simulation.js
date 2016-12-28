@@ -17,6 +17,12 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
 
     var numParticle = simWidth * simWidth;
 
+    var _registeredUniforms = [];
+
+    var _target1;
+    var _target2;
+    var _target3;
+
     // var _simTexSideLen = Math.ceil( Math.sqrt( numParticle ) );
 
     // var _size = _renderer.getSize();
@@ -54,14 +60,17 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
     _initPosTexture.needsUpdate = true;
 
     // image is not deep copied, ? will it get flushed?
-    var _target1 = _createTarget(simWidth, simWidth);
+    _target1 = _createTarget(simWidth, simWidth);
     _target1.texture = _initPosTexture.clone();
     _target1.texture.image.data = new Float32Array(_initPosTexture.image.data);
     _target1.texture.needsUpdate = true;
-    var _target2 = _createTarget(simWidth, simWidth);
+    _target2 = _createTarget(simWidth, simWidth);
     _target2.texture = _initPosTexture.clone();
     _target2.texture.image.data = new Float32Array(_initPosTexture.image.data);
     _target2.texture.needsUpdate = true;
+    _target3 = _createTarget(simWidth, simWidth);
+
+    var _currUpdateTarget = 3;
 
 
     var _simulationMaterial = new THREE.RawShaderMaterial( {
@@ -142,24 +151,58 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
         return target;
     }
 
-    
 
+    _outTargetPtr = null;
+
+    function _updateRegisteredUniforms() {
+        for (var i = 0; i < _registeredUniforms.length; i++) {
+            _registeredUniforms[i].value = _outTargetPtr.texture;
+        }
+    };
 
     this.update = function (dt, t) {
         _simulationMaterial.uniforms.uDeltaT.value = dt;
         _simulationMaterial.uniforms.uTime.value = t;
 
-        _simulationMaterial.uniforms.tPrevPos.value = _target2.texture;
-        _simulationMaterial.uniforms.tCurrPos.value = _target1.texture;
 
+        if (_currUpdateTarget === 1) {
+            _simulationMaterial.uniforms.tPrevPos.value = _target2.texture;
+            _simulationMaterial.uniforms.tCurrPos.value = _target3.texture;
+            _renderer.render(_scene, _cameraRTT, _target1);
+            _outTargetPtr = _target1;
+        }
+        else if (_currUpdateTarget === 2) {
+            _simulationMaterial.uniforms.tPrevPos.value = _target3.texture;
+            _simulationMaterial.uniforms.tCurrPos.value = _target1.texture;
+            _renderer.render(_scene, _cameraRTT, _target2);
+            _outTargetPtr = _target2;
+        }
+        else if (_currUpdateTarget === 3) {
+            _simulationMaterial.uniforms.tPrevPos.value = _target1.texture;
+            _simulationMaterial.uniforms.tCurrPos.value = _target2.texture;
+            _renderer.render(_scene, _cameraRTT, _target3);
+            _outTargetPtr = _target3;
+        }
+        else {
+            console.error("Simulation target idx: something's wrong!");
+        }
 
-        renderer.render(_scene, _cameraRTT);
+        _updateRegisteredUniforms();
 
-        var tmp_target = _target1;
-        _target1 = _target2;
-        _target2 = tmp_target;
+        _currUpdateTarget++;
+        if (_currUpdateTarget > 3) {
+            _currUpdateTarget = 1;
+        }
 
     };
+
+    this.registerUniform = function(uniform) {
+        _registeredUniforms.push(uniform);
+        uniform.value = _outTargetPtr;
+    };
+
+
+
 
 
 

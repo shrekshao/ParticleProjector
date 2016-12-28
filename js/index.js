@@ -190,8 +190,9 @@
 
                     'uPointSize': { type: 'f', value: cfg.pointSize },
                     'uAlpha': { type: 'f', value: cfg.pointAlpha },
-                    'tDiffuse': { type: 't', value: texture }
-                    // 'tDiffuse': { type: 't', value: THREE.ImageUtils.loadTexture( 'models/obj/di/di.png' ) }
+                    'tDiffuse': { type: 't', value: texture },
+
+                    'tPos': { type: 't', value: null }
                 },
                 vertexShader: document.getElementById( 'vs-particles' ).textContent,
                 fragmentShader: document.getElementById( 'fs-particles' ).textContent,
@@ -223,17 +224,30 @@
                 uv[ i + 1 ] = points.uv[ j ].y;
             }
 
+            var uvIdx = new Float32Array( particleCount * 2 );
+            var row, col;
+            for ( i = 0, j = 0, l = uvIdx.length; i < l; i += 2, j += 1 ) {
+                row = Math.floor( j / simWidth );
+                col = j - row * simWidth;
+
+                uvIdx[ i ] = row / simWidth;
+                uvIdx[ i + 1 ] = col / simWidth;
+            }
+
 
 
             var geometry = new THREE.BufferGeometry();
-            geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 3 ).setDynamic( true ) );
-            geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( true ) );
-            geometry.addAttribute( 'uv', new THREE.BufferAttribute( uv, 2 ).setDynamic( true ) );
+            geometry.addAttribute( 'position', new THREE.BufferAttribute( position, 3 ).setDynamic( false ) );
+            geometry.addAttribute( 'normal', new THREE.BufferAttribute( normal, 3 ).setDynamic( false ) );
+            geometry.addAttribute( 'uv', new THREE.BufferAttribute( uv, 2 ).setDynamic( false ) );
+
+            // particle Idx
+            geometry.addAttribute( 'uvIdx', new THREE.BufferAttribute( uvIdx, 2 ).setDynamic( false ) )
 
             // geometry.attributes.position.array;
             
             simulation = new Simulation( renderer, isWebGL2, simWidth, geometry.attributes.position.array );
-
+            simulation.registerUniform( particleMaterial.uniforms.tPos );
 
 
             pointMesh = new THREE.Points(geometry, particleMaterial);
@@ -256,7 +270,7 @@
 
         simulation.update(0.1, particleMaterial.uniforms.uTime.value);
 
-        // renderer.render(scene, camera);
+        renderer.render(scene, camera);
     }
 
 
