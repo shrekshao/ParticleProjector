@@ -30,7 +30,7 @@
 
     // temp cfg class
     var cfg = {
-        pointSize: 20.0, 
+        pointSize: 30.0, 
         pointAlpha: 1.0
     };
 
@@ -109,7 +109,7 @@
         // camera
         camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
         camera.position.z = 160;
-        camera.position.y = 0;
+        camera.position.x = -100;
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         
 

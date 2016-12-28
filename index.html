@@ -50,6 +50,10 @@
 	</script>
 
 	<script id="fs-raw-sim" type="x-shader/x-fragment">
+		#define M_PI    3.14159265358979323846264338327950
+		#define M_2PI   6.28318530717958647692528676655900
+		#define M_PI2   1.57079632679489661923132169163975
+
 		precision highp float;
 		precision highp int;
 
@@ -292,6 +296,11 @@
 		// 	return normalize( vec3( x , y , z ) * divisor );
 		// }
 
+		// source: http://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl
+		float rand(vec2 seed) {
+			return fract(sin(dot(seed.xy,vec2(12.9898,78.233))) * 43758.5453);
+		}
+
 
 		void main()	
 		{
@@ -309,13 +318,26 @@
 			// float sqDist = dist * dist;
 			// dir /= sqDist;
 
-			// acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
-			acc =  0.5 * dir * dist;
+
+			// add acc pattern
+			float radius = vUV.y;
+			float theta = vUV.x * M_2PI;
+			float randVal = rand(vec2(theta, radius));
+			radius += randVal * 0.5;
+			theta += randVal * 0.5;
+
+			float radialArms = sin(0.7 * theta);
+
+
+
+			// // acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
+			// acc =  0.5 * dir * dist;
+			acc =  0.5 * dir * dist * (radialArms/2.0 + 0.5) * randVal;
 
 
 
 			// apply updates
-			vel = K_VEL_DECAY * vel + acc * uDeltaT + 0.02 * snoiseVec3(prevPos);
+			vel = K_VEL_DECAY * vel + acc * uDeltaT + 0.1 * snoiseVec3(prevPos + vec3(uTime)) ;
 			// vel = K_VEL_DECAY * vel + acc * uDeltaT;
 
 			// vel = dir * dist;
