@@ -15,13 +15,15 @@
 
     var camera, tick = 0,
         scene, renderer, clock = new THREE.Clock(true),
-        controls, gui = new dat.GUI();
+        controls;
 
     var backgroundScene;
     var backgroundCamera;
 
     var container;
     var canvas;
+
+    
 
     var gl;
     var isWebGL2 = true;
@@ -43,17 +45,17 @@
     var simulation;
 
 
-
-    gui.add( cfg, 'pointSize', 1.0, 100.0 ).onChange( function(value) {
-        particleMaterial.uniforms.uPointSize.value = value;
-        // pointMesh.material.uniforms.uPointSize.value = value;
-        // console.log('pointSize: ' + value);
-    } );
-    gui.add( cfg, 'pointAlpha', 0.0, 1.0 ).onChange( function(value) {
-        particleMaterial.uniforms.uAlpha.value = value;
-        // pointMesh.material.uniforms.uAlpha.value = value;
-        // console.log('pointAlpha: ' + value);
-    } );
+    // var gui = new dat.GUI();
+    // gui.add( cfg, 'pointSize', 1.0, 100.0 ).onChange( function(value) {
+    //     particleMaterial.uniforms.uPointSize.value = value;
+    //     // pointMesh.material.uniforms.uPointSize.value = value;
+    //     // console.log('pointSize: ' + value);
+    // } );
+    // gui.add( cfg, 'pointAlpha', 0.0, 1.0 ).onChange( function(value) {
+    //     particleMaterial.uniforms.uAlpha.value = value;
+    //     // pointMesh.material.uniforms.uAlpha.value = value;
+    //     // console.log('pointAlpha: ' + value);
+    // } );
 	
     function onWindowResize() {
 
@@ -91,12 +93,63 @@
     }
 
 
+    var mouseInteraction = (function () {
+        var mouseVector = new THREE.Vector3();
+        mouseVector.z = 0.0;
+        // var dir = new THREE.Vector3();
+        var distance;
+
+        return function (e) {
+            mouseVector.x = 2 * e.clientX / e.currentTarget.width - 1;
+            mouseVector.y = - 2 * e.clientY / e.currentTarget.height + 1;
+            mouseVector.z = 0.5;
+
+            mouseVector.unproject( camera );
+
+            mouseVector.sub( camera.position );
+            mouseVector.normalize();
+            distance = - camera.position.z / mouseVector.z;
+
+            mouseVector.multiplyScalar( distance ).add(camera.position);
+
+            simulation.updateMouseWorldPosition(mouseVector.x, mouseVector.y);
+        }
+
+    })();
+
+    // function mouseInteraction() {
+    //     var mouseVector = new THREE.Vector3();
+    //     mouseVector.z = 0.0;
+    //     // var dir = new THREE.Vector3();
+    //     var distance;
+
+    //     return function (e) {
+    //         mouseVector.x = 2 * e.clientX / e.currentTarget.width - 1;
+    //         mouseVector.y = 2 * e.clientY / e.currentTarget.height - 1;
+    //         mouseVector.z = 0.5;
+
+    //         mouseVector.unproject( camera );
+
+    //         mouseVector.sub( camera.position );
+    //         mouseVector.normalize();
+    //         distance = - camera.position.z / mouseVector.z;
+
+    //         mouseVector.multiplyScalar( distance ).add(camera.position);
+
+    //         simulation.updateMouseWorldPosition(mouseVector.x, mouseVector.y);
+    //     }
+
+    // };
+
+    
+
 
 
     function init(success) {
-        container = document.createElement( 'div' );
-        document.body.appendChild( container );
-        canvas = document.createElement( 'canvas' );
+        // container = document.createElement( 'div' );
+        // document.body.appendChild( container );
+        // canvas = document.createElement( 'canvas' );
+        
 
         gl = canvas.getContext( 'webgl2', { antialias: true } );
         if (!gl) {
@@ -107,7 +160,7 @@
         renderer = new THREE.WebGLRenderer( { canvas: canvas, context: gl } );
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        container.appendChild(renderer.domElement);
+        // container.appendChild(renderer.domElement);
 
         window.addEventListener('resize', onWindowResize, false);
 
@@ -322,6 +375,14 @@
                 backgroundScene.add(backgroundCamera);
 
                 
+
+
+                canvas.onmousemove = mouseInteraction;
+                // canvas.onmousemove = mouseInteraction();
+
+
+
+
                 success();
                 
             } );
@@ -348,9 +409,16 @@
     }
 
 
+    
+
+
+
     window.onload = function() {
+        canvas = document.getElementById( 'webgl-canvas' );
         init(update);
     };
     // update();
+
+    
 
 })();
