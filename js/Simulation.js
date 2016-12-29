@@ -121,7 +121,7 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
         },
         defines: {
             // K_VEL_DECAY: '0.99'
-            K_VEL_DECAY: '0.9'
+            K_VEL_DECAY: '0.95'
         },
         vertexShader: document.getElementById( 'vs-raw-sim' ).textContent,
         fragmentShader: document.getElementById( 'fs-raw-sim' ).textContent,
@@ -256,9 +256,8 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
     }
 
 
-    this.updateMouseWorldPosition = function(x, y) {
-        _simulationMaterial.uniforms.uMousePos.value.x = x;
-        _simulationMaterial.uniforms.uMousePos.value.y = y;
+    this.updateMousePosition = function(vector) {
+        _simulationMaterial.uniforms.uMousePos.value = vector;
     }
 
 

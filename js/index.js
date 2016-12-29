@@ -21,14 +21,13 @@
     var backgroundCamera;
 
     var container;
-    var canvas;
-
-    
+    var canvas;    
 
     var gl;
     var isWebGL2 = true;
 
-    var simWidth = 256;
+    // var simWidth = 256;
+    var simWidth = 400;
     // var particleCount = 40000;
     var particleCount = simWidth * simWidth;
 
@@ -102,9 +101,12 @@
         return function (e) {
             mouseVector.x = 2 * e.clientX / e.currentTarget.width - 1;
             mouseVector.y = - 2 * e.clientY / e.currentTarget.height + 1;
-            mouseVector.z = 0.5;
+            // mouseVector.z = 0.5;
+            mouseVector.z = 0;
 
             mouseVector.unproject( camera );
+
+            // mouseVector.normalize();
 
             mouseVector.sub( camera.position );
             mouseVector.normalize();
@@ -112,34 +114,12 @@
 
             mouseVector.multiplyScalar( distance ).add(camera.position);
 
-            simulation.updateMouseWorldPosition(mouseVector.x, mouseVector.y);
+            // mouseVector.applyEuler( 0, pointMesh.rotation.y, 0);
+
+            simulation.updateMousePosition(mouseVector);
         }
 
     })();
-
-    // function mouseInteraction() {
-    //     var mouseVector = new THREE.Vector3();
-    //     mouseVector.z = 0.0;
-    //     // var dir = new THREE.Vector3();
-    //     var distance;
-
-    //     return function (e) {
-    //         mouseVector.x = 2 * e.clientX / e.currentTarget.width - 1;
-    //         mouseVector.y = 2 * e.clientY / e.currentTarget.height - 1;
-    //         mouseVector.z = 0.5;
-
-    //         mouseVector.unproject( camera );
-
-    //         mouseVector.sub( camera.position );
-    //         mouseVector.normalize();
-    //         distance = - camera.position.z / mouseVector.z;
-
-    //         mouseVector.multiplyScalar( distance ).add(camera.position);
-
-    //         simulation.updateMouseWorldPosition(mouseVector.x, mouseVector.y);
-    //     }
-
-    // };
 
     
 
@@ -167,9 +147,16 @@
 
         // camera
         camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+        
+
+        
         camera.position.z = 160;
-        camera.position.x = -100;
-        controls = new THREE.OrbitControls( camera, renderer.domElement );
+        camera.position.x = -50;
+        camera.position.y = 0;
+
+        // camera.lookAt( new THREE.Vector3(0, 0, 0) );
+
+        // controls = new THREE.OrbitControls( camera, renderer.domElement );
         
 
 
@@ -399,6 +386,9 @@
         requestAnimationFrame(update);
         particleMaterial.uniforms.uTime.value += 0.1;
         // TODO: fixed update
+
+        // pointMesh.rotation.y += 0.005;
+        pointMesh.rotation.y = Math.PI / 3 * 0.5 * Math.sin( 0.1 * particleMaterial.uniforms.uTime.value ) ;
 
         simulation.update(0.1, particleMaterial.uniforms.uTime.value);
 
