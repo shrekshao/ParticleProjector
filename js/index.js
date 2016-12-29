@@ -159,9 +159,9 @@
         
         camera.position.z = 160;
         // camera.position.x = -60;
-        // camera.position.y = 0;
+        camera.position.y = 50;
 
-        // camera.lookAt( new THREE.Vector3(0, 0, 0) );
+        camera.lookAt( new THREE.Vector3(0, 0, 0) );
 
         // controls = new THREE.OrbitControls( camera, renderer.domElement );
         
@@ -430,11 +430,12 @@
 
         // renderer.render(backgroundScene, backgroundCamera); //temp
         // renderer.autoClear = false;
+
         // renderer.render(scene, camera);
         // renderer.autoClear = true;
 
         
-        swordsman.rotation.y += 0.005;
+        swordsman.rotation.y += 0.01;
         renderer.render(scene, camera, pixelTarget);
 
         renderer.render(pixelScene, backgroundCamera);
