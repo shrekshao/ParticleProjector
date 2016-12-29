@@ -27,7 +27,7 @@
     var isWebGL2 = true;
 
     // var simWidth = 256;
-    var simWidth = 400;
+    var simWidth = 350;
     // var particleCount = 40000;
     var particleCount = simWidth * simWidth;
 
@@ -151,7 +151,7 @@
 
         
         camera.position.z = 160;
-        camera.position.x = -50;
+        camera.position.x = -60;
         camera.position.y = 0;
 
         // camera.lookAt( new THREE.Vector3(0, 0, 0) );

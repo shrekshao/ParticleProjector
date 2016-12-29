@@ -12,13 +12,51 @@
 		}
 
 		a {
-			color: #0078ff;
+			color: #CF7371;
 		}
 
-		.dg {
-			right: auto!important;
-			left: 20px!important;
+
+		p{
+			color: #972623; 
+			font-family: "Microsoft YaHei";
+			font-size: 20px;
+			margin: 10px 0 0 10px;
+			white-space: nowrap;
+			overflow: hidden;
+			width: 30em;
+			/*width: 23%;*/
+			/*word-wrap: break-word;*/
+			
+			animation: type 4s steps(60, end); 
 		}
+
+		p:nth-child(2){
+			animation: type2 8s steps(60, end);
+		}
+
+		p a{
+		color: #CF7371;
+		text-decoration: none;
+		}
+
+		@keyframes type{ 
+			from { width: 0; } 
+		} 
+
+		@keyframes type2{
+			0%{width: 0;}
+			50%{width: 0;}
+			100%{ width: 100; } 
+		} 
+
+		@keyframes blink{
+			to{opacity: .0;}
+		}
+
+		::selection{
+			background: black;
+		}
+
 	</style>
 
 
@@ -471,12 +509,21 @@
 
 	<canvas id="webgl-canvas" style="position:fixed; top:0;left:0"></canvas>
 
-	<div style="position: absolute; top: 20%; left: 10%; width: 100%; color:#a00">
-		ShrekShao 狄学长 狄克
-		<br/>
-		武器：苍牙
-		<br/>
-		绝招：XXXX斩
+	<div style="position: absolute; top: 20%; left: 10%;">
+		<p>
+			<a href="http://shrekshao.github.io">Goto Website MainPage</a><br/>
+			<br/>
+			ShrekShao<br/>
+			A MediocreProgrammer<br/>
+			Weapon: Black Sabor Tooth (Sword)<br/>
+			Special Move: I don't know how to translate this...<br/>
+			<br/>
+			狄学长 狄克<br/>
+			一个生来平庸的程序猿<br/>
+			武器：苍牙<br/>
+			绝招：奔狼裂斩 狼袭月斩 苍痕抡斩<br/>
+		</p>
+		
 	</div>
 </body>
 
