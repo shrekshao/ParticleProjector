@@ -115,7 +115,7 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
             "uDeltaT": { type: "f", value: 0.0 },
             "uTime": { type: "f", value: 0.0 },
 
-            "uMousePos": { type: "v3", value: new THREE.Vector3(0, 0, 0) }
+            "uMousePos": { type: "v3", value: new THREE.Vector3(-999, -999, 0) }
             // "uInputPos": { type: "v3v", value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] },
             // "uInputPosAccel": { type: "v4", value: new THREE.Vector4(0,0,0,0) },
         },
