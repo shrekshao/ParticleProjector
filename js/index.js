@@ -21,8 +21,8 @@
     var backgroundCamera;
 
     var pixelScene;
-    var pixelScale = 11;
-    var pixelRescale = 5;
+    var pixelScale = 8;
+    var pixelRescale = 2.5;
 
     var container;
     var canvas;    
