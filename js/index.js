@@ -20,6 +20,10 @@
     var backgroundScene;
     var backgroundCamera;
 
+    var pixelScene;
+    var pixelScale = 11;
+    var pixelRescale = 5;
+
     var container;
     var canvas;    
 
@@ -39,6 +43,9 @@
 
     var particleMaterial;
     var pointMesh;
+
+    var swordsman;
+    var pixelTarget;
 
 
     var simulation;
@@ -151,15 +158,22 @@
 
         
         camera.position.z = 160;
-        camera.position.x = -60;
-        camera.position.y = 0;
+        // camera.position.x = -60;
+        // camera.position.y = 0;
 
         // camera.lookAt( new THREE.Vector3(0, 0, 0) );
 
         // controls = new THREE.OrbitControls( camera, renderer.domElement );
         
-
-
+        
+        pixelTarget = new THREE.WebGLRenderTarget(canvas.width / pixelScale, canvas.height / pixelScale, {
+            minFilter: THREE.NearestFilter,
+            magFilter: THREE.NearestFilter,
+            format: THREE.RGBFormat,
+            type: THREE.UnsignedByteType,
+            depthBuffer: true,
+            stencilBuffer: false
+        }); 
 
         
 
@@ -167,14 +181,15 @@
 
 
         // scene
+        
         scene = new THREE.Scene();
 
-        // var ambient = new THREE.AmbientLight( 0x444444 );
-        // scene.add( ambient );
+        var ambient = new THREE.AmbientLight( 0x444444 );
+        scene.add( ambient );
 
-        // var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-        // directionalLight.position.set( 0, 0, 1 ).normalize();
-        // scene.add( directionalLight );
+        var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+        directionalLight.position.set( 0, 0, 1 ).normalize();
+        scene.add( directionalLight );
 
         // var sphereBufferGeometry = new THREE.SphereBufferGeometry( 5, 10, 10 );
         // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -216,6 +231,7 @@
         // backgroundDirectionalLight.position.set( 0, 0, -1 ).normalize();
         // backgroundScene.add( backgroundDirectionalLight );
         
+        pixelScene = new THREE.Scene();
 
 
         loadObjModel( {
@@ -306,10 +322,12 @@
 
 
             pointMesh = new THREE.Points(geometry, particleMaterial);
-            scene.add( pointMesh );
+            // scene.add( pointMesh );
 
+            swordsman = object;
 
-            // scene.add(object);
+            scene.add(object);
+            object.position.y = -50;
 
             // success();
 
@@ -359,9 +377,27 @@
                 backgroundMesh.material.depthWrite = false;
 
                 backgroundScene.add(backgroundMesh);
-                backgroundScene.add(backgroundCamera);
+                // backgroundScene.add(backgroundCamera);
 
-                
+
+                var pixelMesh = new THREE.Mesh(
+                    new THREE.PlaneGeometry(
+                        2 / pixelScale, 
+                        2 * canvas.height / canvas.width / pixelScale,
+                        0
+                    ),
+                    new THREE.MeshBasicMaterial({
+                        map: pixelTarget.texture
+                        // color: 0x555555
+                    }));
+                pixelMesh.position.y = 0;
+                // pixelMesh.scale.set( pixelScale , pixelScale, 1 );
+                pixelMesh.scale.set( pixelRescale , pixelRescale , 1 );
+
+                pixelMesh.material.depthTest = false;
+                pixelMesh.material.depthWrite = false;
+
+                pixelScene.add(pixelMesh);
 
 
                 canvas.onmousemove = mouseInteraction;
@@ -387,15 +423,21 @@
         particleMaterial.uniforms.uTime.value += 0.1;
         // TODO: fixed update
 
-        // pointMesh.rotation.y += 0.005;
-        pointMesh.rotation.y = Math.PI / 3 * 0.5 * Math.sin( 0.1 * particleMaterial.uniforms.uTime.value ) ;
+        pointMesh.rotation.y += 0.005;
+        // pointMesh.rotation.y = Math.PI / 3 * 0.5 * Math.sin( 0.1 * particleMaterial.uniforms.uTime.value ) ;
 
-        simulation.update(0.1, particleMaterial.uniforms.uTime.value);
+        // simulation.update(0.1, particleMaterial.uniforms.uTime.value);
 
-        renderer.render(backgroundScene, backgroundCamera); //temp
-        renderer.autoClear = false;
-        renderer.render(scene, camera);
-        renderer.autoClear = true;
+        // renderer.render(backgroundScene, backgroundCamera); //temp
+        // renderer.autoClear = false;
+        // renderer.render(scene, camera);
+        // renderer.autoClear = true;
+
+        
+        swordsman.rotation.y += 0.005;
+        renderer.render(scene, camera, pixelTarget);
+
+        renderer.render(pixelScene, backgroundCamera);
     }
 
 
