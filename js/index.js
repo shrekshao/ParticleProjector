@@ -131,11 +131,14 @@
         // canvas = document.createElement( 'canvas' );
         
 
-        gl = canvas.getContext( 'webgl2', { antialias: true } );
-        if (!gl) {
-            isWebGL2 = false;
-            gl = canvas.getContext( 'webgl', { antialias: true } );
-        }
+        // gl = canvas.getContext( 'webgl2', { antialias: true } );
+        // if (!gl) {
+        //     isWebGL2 = false;
+        //     gl = canvas.getContext( 'webgl', { antialias: true } );
+        // }
+
+        isWebGL2 = false;
+        gl = canvas.getContext( 'webgl', { antialias: true } );
 
         renderer = new THREE.WebGLRenderer( { canvas: canvas, context: gl } );
         renderer.setPixelRatio(window.devicePixelRatio);
