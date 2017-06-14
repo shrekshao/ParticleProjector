@@ -1,3 +1,5 @@
+var THREE = require('three');
+
 var App = App || {};
 
 App = (function() {

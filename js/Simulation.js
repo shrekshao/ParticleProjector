@@ -1,3 +1,4 @@
+var THREE = require('three');
 // texture fbo / transform feedback for particle simulation
 
 var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
@@ -190,7 +191,7 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
 
 
 
-    _outTargetPtr = null;
+    var _outTargetPtr = null;
 
     function _updateRegisteredUniforms() {
         for (var i = 0; i < _registeredUniforms.length; i++) {
@@ -262,3 +263,5 @@ var Simulation = function (renderer, isWebGL2, simWidth, initPosTypedArray) {
 
 
 };
+
+export { Simulation };

@@ -1,0 +1,29 @@
+{
+  "name": "particle-projector",
+  "version": "1.0.0",
+  "description": "three.js particle projector",
+  "main": "js/index.js",
+  "scripts": {
+    "build": "webpack",
+    "build-watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shrekshao/ParticleProjector.git"
+  },
+  "author": "shrekshao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shrekshao/ParticleProjector/issues"
+  },
+  "homepage": "https://github.com/shrekshao/ParticleProjector#readme",
+  "devDependencies": {
+    "webpack": "^2.6.1",
+    "webpack-glsl-loader": "^1.0.1"
+  },
+  "dependencies": {
+    "three": "^0.85.2",
+    "three-mtl-loader": "^1.0.1",
+    "three-obj-loader": "^1.1.2"
+  }
+}

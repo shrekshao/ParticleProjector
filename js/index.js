@@ -1,14 +1,11 @@
-
-/*
-(function() {
-    'use strict'
-    
-    var app = new App();
-})();
-*/
-
-// var app = new App();
-
+var THREE = require('three');
+import { Simulation } from './Simulation'
+// var OBJLoader = require('three-obj-loader');
+// OBJLoader(THREE);
+require('three-obj-loader')(THREE);
+// var MTLLoader = require('three-mtl-loader');
+require('./lib/MTLLoaderExport.js')(THREE);
+var GeometryUtils = require('./lib/GeometryUtilsExport.js')(THREE);
 
 (function() {
     'use strict'
@@ -239,7 +236,8 @@
             // var texture = object.children[0].material.materials[0].map;
 
             
-            var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
+            // var points = THREE.GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
+            var points = GeometryUtils.randomPointsWithAttributeInBufferGeometry( bufferGeo, particleCount );
             // custom particle shader test
             particleMaterial = new THREE.ShaderMaterial( {
                 uniforms: {
