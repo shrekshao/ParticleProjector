@@ -371,13 +371,20 @@
 
 
 			vec3 inputForceDir = currPos - uMousePos;
-			float force = dot(inputForceDir, inputForceDir);
+			float force2 = dot(inputForceDir, inputForceDir);
+			float force = sqrt(force2);
 
 			// // acc = 1.0 / ( dot(dir, dir) + 0.1 ) ;
 			// acc =  0.5 * dir * dist;
-			acc =  0.5 * dir * dist * (radialArms / 2.0 + 0.5) * randVal 
-					+ 20.0 * inputForceDir / (force + 0.001) ;
+			
+			acc =  0.5 * dir * dist * (radialArms / 2.0 + 0.5) * randVal;
+			// acc += 20.0 * inputForceDir / (force + 0.001) ;
 
+			if (force < 20.0)
+			{
+				acc += 20.0 * inputForceDir / force * (10.0 / force + 0.001);
+			}
+			
 
 
 			// apply updates
