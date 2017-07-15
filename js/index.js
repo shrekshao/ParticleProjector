@@ -223,8 +223,8 @@ var GeometryUtils = require('./lib/GeometryUtilsExport.js')(THREE);
             // mtlName: 'Sword07_obj.mtl',
             // objName: 'Sword07_obj.obj'
 
-            baseUrl: 'models/obj/di/',
-            objName: 'di.obj'
+            // baseUrl: 'models/obj/di/',
+            objName: 'models/obj/di/di.obj'
         } , function (object) {
 
             console.log(object);
